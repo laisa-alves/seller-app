@@ -1,9 +1,7 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <p>Página inicial</p>
-
-  
+  <div class="font-NunitoSans">
+    <p class="font-bold underline bg-red-300">Página inicial como exemplo</p>
+  </div>
 </template>

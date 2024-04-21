@@ -41,7 +41,7 @@ import { RouterLink } from 'vue-router'
         </p>
         <div class="flex items-center">
           <RouterLink
-            :to="{ name: 'initial' }"
+            :to="{ name: 'signup' }"
             class="inline-flex items-center justify-center h-12 px-6 mr-6 font-medium tracking-wide text-white transition duration-200 rounded-md shadow-md bg-deep-orange-400 hover:bg-deep-orange-600"
           >
             Cadastrar agora

@@ -41,12 +41,12 @@ const mobileMenuOpen = ref(false)
     <!-- Signin and Signup -->
     <div class="hidden lg:flex lg:flex-1 lg:justify-end gap-4">
       <RouterLink
-        :to="{ name: 'initial' }"
+        :to="{ name: 'signin' }"
         class="inline-flex items-center justify-center h-10 px-4 font-semibold text-sm tracking-wide text-deep-orange-600 transition duration-200 rounded-md shadow-sm ring-1 ring-deep-orange-600 hover:bg-deep-orange-50"
         >Entrar</RouterLink
       >
       <RouterLink
-        :to="{ name: 'initial' }"
+        :to="{ name: 'signup' }"
         class="inline-flex items-center justify-center h-10 px-4 font-semibold text-sm tracking-wide text-white transition duration-200 rounded-md shadow-sm bg-deep-orange-400 hover:bg-deep-orange-600"
         >Cadastrar</RouterLink
       >
@@ -91,12 +91,12 @@ const mobileMenuOpen = ref(false)
           <!-- Mobile signin and signup -->
           <div class="py-6">
             <RouterLink
-              :to="{ name: 'initial' }"
+              :to="{ name: 'signin' }"
               class="-mx-3 mb-2 block text-center rounded-lg px-3 py-2 text-base font-semibold leading-7 text-deep-orange-400 hover:bg-deep-orange-50"
               >Entrar</RouterLink
             >
             <RouterLink
-              :to="{ name: 'initial' }"
+              :to="{ name: 'signup' }"
               class="-mx-3 block text-center rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white bg-deep-orange-400 hover:bg-deep-orange-600"
               >Cadastrar</RouterLink
             >

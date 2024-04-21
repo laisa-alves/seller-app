@@ -4,6 +4,7 @@ import InitialHomePage from '@/views/home/pages/InitialHomePage.vue'
 import AboutHomePage from '@/views/home/pages/AboutHomePage.vue'
 import SupportHomePage from '@/views/home/pages/SupportHomePage.vue'
 import BlogHomePage from '@/views/home/pages/BlogHomePage.vue'
+import SignView from '@/views/home/SignView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,16 @@ const router = createRouter({
           component: BlogHomePage
         }
       ]
+    },
+    {
+      path: '/signin',
+      name: 'signin',
+      component: SignView
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignView
     }
   ]
 })

@@ -4,7 +4,7 @@ import InitialHomePage from '@/views/home/pages/InitialHomePage.vue'
 import AboutHomePage from '@/views/home/pages/AboutHomePage.vue'
 import SupportHomePage from '@/views/home/pages/SupportHomePage.vue'
 import BlogHomePage from '@/views/home/pages/BlogHomePage.vue'
-import SignView from '@/views/home/SignView.vue'
+import SignView from '@/views/sign/SignView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

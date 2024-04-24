@@ -42,7 +42,7 @@ const schema = Yup.object().shape({
 </script>
 
 <template>
-  <!-- Erro de envio do form -->
+  <!-- Form send error -->
   <div
     v-show="!fetchError"
     role="alert"
@@ -60,7 +60,7 @@ const schema = Yup.object().shape({
     <TextInput name="email" type="email" />
 
     <!-- Password input -->
-    <label for="email" class="block w-full mb-1 text-md font-medium leading-6">Senha</label>
+    <label for="password" class="block w-full mb-1 text-md font-medium leading-6">Senha</label>
     <TextInput name="password" type="password" />
 
     <!-- Remember me -->

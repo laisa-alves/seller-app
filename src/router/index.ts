@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/home/HomeView.vue'
-import InitialHomePage from '@/views/home/pages/InitialHomePage.vue'
-import AboutHomePage from '@/views/home/pages/AboutHomePage.vue'
-import SupportHomePage from '@/views/home/pages/SupportHomePage.vue'
-import BlogHomePage from '@/views/home/pages/BlogHomePage.vue'
-import SignView from '@/views/sign/SignView.vue'
+import HomeView from '@/views/Home/HomeView.vue'
+import InitialHomePage from '@/views/Home/Pages/InitialHomePage.vue'
+import AboutHomePage from '@/views/Home/Pages/AboutHomePage.vue'
+import SupportHomePage from '@/views/Home/Pages/SupportHomePage.vue'
+import BlogHomePage from '@/views/Home/Pages/BlogHomePage.vue'
+import SignView from '@/views/Sign/SignView.vue'
+import DashboardView from '@/views/Dashboard/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,11 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignView
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView
     }
   ]
 })

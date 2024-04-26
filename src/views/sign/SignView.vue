@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import SigninPage from './pages/SigninPage.vue'
-import SignupPage from './pages/SignupPage.vue'
+import SigninPage from './Pages/SigninPage.vue'
+import SignupPage from './Pages/SignupPage.vue'
 
 const route = useRoute()
 

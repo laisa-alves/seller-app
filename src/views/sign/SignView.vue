@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import SigninPage from './Pages/SigninPage.vue'
-import SignupPage from './Pages/SignupPage.vue'
+import SignIn from '../../components/Sign/SignIn.vue'
+import SignUp from '../../components/Sign/SignUp.vue'
 
 const route = useRoute()
 
-const currentRoute = route.path.includes('signin') ? SigninPage : SignupPage
+const currentRoute = route.path.includes('signin') ? SignIn : SignUp
 </script>
 
 <template>

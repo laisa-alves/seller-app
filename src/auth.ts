@@ -2,6 +2,7 @@ import { createStorage, type SimpleStorage } from './storage'
 
 class Auth {
   private storage: SimpleStorage
+  apiSellerKey = 'G2axqtqwkxq3HWojcm3vqixqGG8='
 
   constructor(persistent = false) {
     this.storage = createStorage(persistent)
@@ -51,7 +52,7 @@ class Auth {
 
   async signIn(email: string, password: string, onSuccess: () => void, onFailure: () => void) {
     const body = {
-      login: {
+      signin: {
         email: email,
         password: password
       }
@@ -61,7 +62,8 @@ class Auth {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-API-KEY': this.apiSellerKey
       },
       body: JSON.stringify(body)
     }).then((response) => {

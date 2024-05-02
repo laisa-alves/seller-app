@@ -9,14 +9,33 @@ import { Auth } from '@/auth'
 const router = useRouter()
 const fetchError = ref(true)
 
-function onSubmit(values: GenericObject) {}
+function onSubmit(values: GenericObject) {
+  // Login após criar cadastro é sessionStorage como padrão
+  let auth = new Auth()
+
+  auth
+    .signUp(
+      values.email || '',
+      values.password || '',
+      values.password_confirmation || '',
+      () => {
+        router.push('/dashboard')
+      },
+      () => {
+        console.log('Não foi criado o novo cadastro')
+      }
+    )
+    .catch((error) => {
+      console.log(error.message)
+    })
+}
 
 const schema = Yup.object().shape({
   email: Yup.string().email('Por favor, insira um email válido').required('O email é obrigatório'),
   password: Yup.string()
     .required('A senha é obrigatória')
     .min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  confirm_password: Yup.string()
+  password_confirmation: Yup.string()
     .required('A confirmação de senha é obrigatória')
     .oneOf([Yup.ref('password')], 'As senhas não conferem')
 })
@@ -45,10 +64,10 @@ const schema = Yup.object().shape({
     <TextInput name="password" type="password" />
 
     <!-- Confirm password input -->
-    <label for="confirm_password" class="block w-full mb-1 text-md font-medium leading-6"
+    <label for="password_confirmation" class="block w-full mb-1 text-md font-medium leading-6"
       >Confirmação de senha</label
     >
-    <TextInput name="confirm_password" type="password" />
+    <TextInput name="password_confirmation" type="password" />
 
     <!-- Invalid email or password alert -->
     <div class="relative pt-4">

@@ -35,9 +35,11 @@ class Auth {
       email: this.getFallback('email')
     }
   }
+
   isLoggedIn() {
     return Boolean(this.getFallback('token'))
   }
+  
   signOut(andThen = () => {}) {
     let transient = createStorage(false)
     let persistent = createStorage(true)
@@ -59,6 +61,38 @@ class Auth {
     }
 
     await fetch(import.meta.env.VITE_API + 'sign_in', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': this.apiSellerKey
+      },
+      body: JSON.stringify(body)
+    }).then((response) => {
+      if (response.ok) {
+        this.success(response, onSuccess)
+      } else {
+        this.failure(response, onFailure)
+      }
+    })
+  }
+
+  async signUp(
+    email: string,
+    password: string,
+    password_confirmation: string,
+    onSuccess: () => void,
+    onFailure: () => void
+  ) {
+    const body = {
+      user: {
+        email: email,
+        password: password,
+        password_confirmation: password_confirmation
+      }
+    }
+
+    await fetch(import.meta.env.VITE_API + 'new', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

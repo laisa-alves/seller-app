@@ -6,6 +6,27 @@ import SupportHomePage from '@/views/Home/Pages/SupportHomePage.vue'
 import BlogHomePage from '@/views/Home/Pages/BlogHomePage.vue'
 import SignView from '@/views/Sign/SignView.vue'
 import DashboardView from '@/views/Dashboard/DashboardView.vue'
+import { Auth } from '../auth.ts'
+
+const auth = new Auth()
+
+// Bloqueia a rota para usuários não autenticados e redireciona para para login
+const authGuard = (to: RouteLocation, from: RouteLocation, next: RouteLocation) => {
+  if (auth.isLoggedIn()) {
+    next()
+  } else {
+    next('/signin')
+  }
+}
+
+// Bloqueia a rota para usuários autenticados e redireciona para dashboard
+const guest = (to: RouteLocation, from: RouteLocation, next: RouteLocation) => {
+  if (auth.isLoggedIn()) {
+    next('/dashboard')
+  } else {
+    next()
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,16 +60,19 @@ const router = createRouter({
     {
       path: '/signin',
       name: 'signin',
+      beforeEnter: guest,
       component: SignView
     },
     {
       path: '/signup',
       name: 'signup',
+      beforeEnter: guest,
       component: SignView
     },
     {
       path: '/dashboard',
       name: 'dashboard',
+      beforeEnter: authGuard,
       component: DashboardView
     }
   ]

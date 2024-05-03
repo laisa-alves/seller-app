@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import SidebarItemMenu from './SidebarItemMenu.vue'
 import { ref } from 'vue'
+import { useSidebarStore } from '@/stores/sidebar'
+import { onClickOutside } from '@vueuse/core'
+import SidebarItemMenu from './SidebarItemMenu.vue'
 import { RouterLink } from 'vue-router'
+
+const target = ref(null)
+
+const sidebarStore = useSidebarStore()
+
+onClickOutside(target, () => {
+  sidebarStore.isSidebarOpen = false
+})
 
 const menuGroups = ref([
   {
@@ -117,7 +127,7 @@ const menuGroups = ref([
               d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             />
           </svg>`,
-        label: 'Profile',
+        label: 'Perfil',
         route: '/'
       },
       {
@@ -142,43 +152,64 @@ const menuGroups = ref([
           </svg>`,
         label: 'Configurações',
         route: '/'
-      },
-      {
-        icon: `<svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-            />
-          </svg>`,
-        label: 'Logout',
-        route: '/'
       }
+      
     ]
   }
 ])
 </script>
 
 <template>
-  <div class="fixed flex flex-col top-0 left-0 w-64 bg-white h-full border-r">
-    <div class="flex items-center justify-center h-14 border-b">
-      <RouterLink :to="{ name: 'dashboard' }">
+  <aside
+    class="absolute left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-hidden bg-gray-100 drop-shadow-sm duration-300 ease-linear lg:static lg:translate-x-0"
+    :class="{
+      'translate-x-0': sidebarStore.isSidebarOpen,
+      '-translate-x-full': !sidebarStore.isSidebarOpen
+    }"
+    ref="target"
+  >
+    <!-- Sidebar header -->
+    <div class="flex items-center justify-between gap-2 px-6 py-5 lg:py-6">
+      <RouterLink :to="{ name: 'dashboard' }" class="flex flex-grow justify-center">
         <img src="@/assets/images/deliverme.svg" alt="Deliver me logo" />
       </RouterLink>
 
-      <!-- Implementar o Nome da loja -->
+      <!-- Arrow to close menu | mobile -->
+      <button class="block lg:hidden" @click="sidebarStore.isSidebarOpen = false">
+        <svg
+          class="fill-current"
+          width="20"
+          height="18"
+          viewBox="0 0 20 18"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
+            fill=""
+          />
+        </svg>
+      </button>
     </div>
-    <div class="no-scrollbar overflow-y-auto overflow-x-hidden flex-growr">
-      <nav class="mt-4">
+    <!-- Sidebar header ends -->
+
+    <!-- Store info -->
+    <div class="flex mx-4 gap-2 p-2 bg-white rounded-full">
+      <div class="h-14 w-14 rounded-full bg-white overflow-hidden">
+        <img src="@/assets/images/logo_store.png" alt="Logo" />
+      </div>
+      <div class="flex flex-col flex-grow justify-center w-40">
+        <p class="text-sm font-medium tracking-wide truncate">The Sandwich</p>
+        <p class="text-xs front-medium truncate text-gray-500">the.sandwich@email.com</p>
+      </div>
+    </div>
+    <!-- Store info end -->
+
+    <div class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+      <!-- Sidebar Menu -->
+      <nav class="mt-5 lg:mt-9">
         <template v-for="menuGroup in menuGroups" :key="menuGroup.name">
-          <h3 class="mb-4 ml-4 text-sm font-medium tracking-wide text-gray-500">
+          <h3 class="mt-4 mb-2 ml-4 text-sm font-medium uppercase tracking-wide text-gray-500">
             {{ menuGroup.name }}
           </h3>
 
@@ -193,33 +224,5 @@ const menuGroups = ref([
         </template>
       </nav>
     </div>
-  </div>
+  </aside>
 </template>
-
-<!-- Menu name -->
-<!-- <li class="px-5">
-          <div class="flex flex-row items-center h-8">
-            <div class="text-sm font-light tracking-wide text-gray-500">Menu</div>
-          </div>
-        </li> -->
-<!-- Menu name -->
-
-<!-- Menu list - Dashboard -->
-<!-- <li>
-          <a
-            href="#"
-            class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-8 border-transparent hover:border-indigo-500 pr-6"
-          >
-            <span class="inline-flex justify-y-center items-center ml-4"
-              ><HomeIcon class="w-5 h-5"></HomeIcon
-            ></span>
-            <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
-          </a>
-        </li> -->
-<!-- Menu list -->
-
-<!-- <li class="px-5">
-          <div class="flex flex-row items-center h-8">
-            <div class="text-sm font-light tracking-wide text-gray-500">Ajustes</div>
-          </div>
-        </li> -->

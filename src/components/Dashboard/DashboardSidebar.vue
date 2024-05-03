@@ -4,9 +4,13 @@ import { useSidebarStore } from '@/stores/sidebar'
 import { onClickOutside } from '@vueuse/core'
 import SidebarItemMenu from './SidebarItemMenu.vue'
 import { RouterLink } from 'vue-router'
+import { Auth } from '@/auth'
+
+const auth = new Auth()
+const userEmail = auth.currentUser()?.email
+
 
 const target = ref(null)
-
 const sidebarStore = useSidebarStore()
 
 onClickOutside(target, () => {
@@ -200,7 +204,7 @@ const menuGroups = ref([
       </div>
       <div class="flex flex-col flex-grow justify-center w-40">
         <p class="text-sm font-medium tracking-wide truncate">The Sandwich</p>
-        <p class="text-xs front-medium truncate text-gray-500">the.sandwich@email.com</p>
+        <p class="text-xs front-medium truncate text-gray-500">{{ userEmail }}</p>
       </div>
     </div>
     <!-- Store info end -->

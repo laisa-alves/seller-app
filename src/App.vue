@@ -3,7 +3,5 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div class="font-NunitoSans">
-    <RouterView />
-  </div>
+  <RouterView />
 </template>

@@ -22,3 +22,9 @@
     @apply w-full outline-none rounded-md border border-solid border-gray-400 focus:border-deep-orange-200 py-3 px-2 transition duration-300 ease-in-out;
   }
 }
+
+@layer base {
+  body {
+    @apply relative bg-gray-50 font-NunitoSans text-base font-normal text-gray-800
+  }
+}

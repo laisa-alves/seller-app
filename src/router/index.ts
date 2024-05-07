@@ -9,6 +9,10 @@ import DashboardView from '@/views/Dashboard/DashboardView.vue'
 import { Auth } from '../auth.ts'
 import ProfileView from '@/views/Dashboard/ProfileView.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import RaitingsView from '@/views/Dashboard/RaitingsView.vue'
+import OrdersView from '@/views/Dashboard/OrdersView.vue'
+import MenuView from '@/views/Dashboard/MenuView.vue'
+import SettingsView from '@/views/Dashboard/SettingsView.vue'
 
 const auth = new Auth()
 
@@ -82,9 +86,29 @@ const router = createRouter({
           component: DashboardView
         },
         {
+          path: 'raitings',
+          name: 'raitings',
+          component: RaitingsView
+        },
+        {
+          path: 'orders',
+          name: 'orders',
+          component: OrdersView
+        },
+        {
+          path: 'menu',
+          name: 'menu',
+          component: MenuView
+        },
+        {
           path: 'profile',
           name: 'profile',
           component: ProfileView
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: SettingsView
         }
       ]
     }

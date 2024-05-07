@@ -37,7 +37,7 @@ const menuGroups = ref([
             />
           </svg>`,
         label: 'Dashboard',
-        route: {name: 'dashboard'}
+        route: { name: 'dashboard' }
       },
       {
         icon: `<svg
@@ -55,7 +55,7 @@ const menuGroups = ref([
             />
           </svg>`,
         label: 'Avaliações',
-        route: '/'
+        route: { name: 'raitings' }
       },
       {
         icon: `<svg
@@ -73,7 +73,7 @@ const menuGroups = ref([
             />
           </svg>`,
         label: 'Pedidos',
-        route: '/'
+        route: { name: 'orders' }
       },
       {
         icon: `<svg
@@ -91,25 +91,7 @@ const menuGroups = ref([
             />
           </svg>`,
         label: 'Cardápio',
-        route: '/'
-      },
-      {
-        icon: `<svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-5 h-5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>`,
-        label: 'Horários',
-        route: '/'
+        route: { name: 'menu' }
       }
     ]
   },
@@ -155,7 +137,7 @@ const menuGroups = ref([
             />
           </svg>`,
         label: 'Configurações',
-        route: '/'
+        route: { name: 'settings' }
       }
     ]
   }

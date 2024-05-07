@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DashboardSidebar from '@/components/Dashboard/DashboardSidebar.vue'
 import DashboardHeader from '@/components/Dashboard/DashboardHeader.vue'
-
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
@@ -20,7 +20,7 @@ import DashboardHeader from '@/components/Dashboard/DashboardHeader.vue'
       <!-- === Main Content Start === -->
       <main>
         <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-          <slot></slot>
+          <RouterView />
         </div>
       </main>
       <!-- === Main Content End === -->

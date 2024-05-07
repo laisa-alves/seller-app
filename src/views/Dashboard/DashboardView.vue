@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import PageTitle from '@/components/Dashboard/PageTitle.vue'
+import { ref } from 'vue'
+
+const pageTitle = ref('Início')
 </script>
 
 <template>
-  <DashboardLayout>
-    <div class="h-80">Esse é um exemplo de conteúdo</div>
-  </DashboardLayout>
+  <div class="mx-auto max-w-7xl">
+    <PageTitle :pageTitle="pageTitle" />
+  </div>
 </template>

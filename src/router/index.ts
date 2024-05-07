@@ -7,6 +7,8 @@ import BlogHomePage from '@/views/Home/Pages/BlogHomePage.vue'
 import SignView from '@/views/Sign/SignView.vue'
 import DashboardView from '@/views/Dashboard/DashboardView.vue'
 import { Auth } from '../auth.ts'
+import ProfileView from '@/views/Dashboard/ProfileView.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 
 const auth = new Auth()
 
@@ -71,9 +73,20 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      name: 'dashboard',
       beforeEnter: authGuard,
-      component: DashboardView
+      component: DashboardLayout,
+      children: [
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: DashboardView
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: ProfileView
+        }
+      ]
     }
   ]
 })

@@ -18,7 +18,7 @@ const pageTitle = ref('Perfil')
               href="#"
               aria-current="page"
               class="text-deep-orange-600 py-3 text-sm font-medium hover:text-deep-orange-400 md:text-base"
-              >Loja</a
+              >Informações da loja</a
             >
           </div>
           <StoresForm></StoresForm>

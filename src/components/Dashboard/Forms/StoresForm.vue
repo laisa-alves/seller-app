@@ -1,44 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Form, type GenericObject } from 'vee-validate'
-import TextInput from '@/components/TextInput.vue'
-import * as Yup from 'yup'
 import { FormKit } from '@formkit/vue'
-
 
 const editable = ref(false)
 const storeName = ref('')
+const description = defineModel<string>('description')
 
-const toggleEdit = () => {
-  editable.value = !editable.value
-  if (!editable.value) {
-    resetForm()
-  }
-}
-
-const resetForm = () => {
-  // Resetar o estado do formulário
-}
-
-// Regras de validação
-const schema = Yup.object().shape({
-  title: Yup.string()
-    .required('O nome da loja é obrigatório')
-    .min(3, 'O nome deve ter no mínimo 3 caracteres')
-})
-
-const submitForm = async (formData: GenericObject) => {
-  try {
-    // Faça sua chamada API aqui para enviar os dados atualizados
-    console.log('Dados enviados:', formData)
-    // await axios.put('/api/restaurants/:id', formData);
-
-    // Desativar o modo de edição após o envio bem-sucedido
-    editable.value = false
-  } catch (error) {
-    console.error('Erro ao enviar dados:', error)
-  }
-}
 
 onMounted(async () => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
@@ -69,33 +36,31 @@ onMounted(async () => {
     console.error('Erro ao buscar dados:', error)
   }
 })
-
-
-
 </script>
 
 <template>
-  <div>
-    <Form @submit.prevent="submitForm" :validation-schema="schema">
-      <label for="name">Nome do Restaurante:</label>
-      <TextInput name="title" type="text" :placeholder="storeName" />
+  <!-- Edição da Logo -->
+  
 
-      <input type="text" :disabled="!editable" v-model="storeName" v-validate="'required'" />
+  <!-- Edição das informações -->
+  <div class="flex flex-col">
+    <FormKit type="form">
+      <FormKit
+        type="text"
+        label="Nome da loja"
+        v-model="storeName"
+        validation="required|length:3"
+      />
 
-      <button v-if="editable" type="submit">Salvar</button>
-      <button @click.prevent="toggleEdit" type="button">
-        {{ editable ? 'Cancelar' : 'Editar' }}
-      </button>
-    </Form>
-  </div>
-
-  <div>
-    <FormKit type="select" prefix-icon="email" label="teste aqui"></FormKit>
+      <FormKit
+        type="textarea"
+        name="description"
+        label="Descrição"
+        v-model="description"
+        :help="`${description ? description.length : 0} / 200 caracteres`"
+        validation="length:0,200"
+        validation-visibility="live"
+      />
+    </FormKit>
   </div>
 </template>
-
-<style>
-.error {
-  color: red;
-}
-</style>

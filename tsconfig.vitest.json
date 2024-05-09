@@ -16,6 +16,8 @@
     "src/**/*.tsx",
     "src/**/*.jsx",
     "src/**/*.json",
-    "src/**/*.html"
+    "src/**/*.html",
+    "formkit.config.ts",
+    "formkit.theme.ts"
   ]
 }

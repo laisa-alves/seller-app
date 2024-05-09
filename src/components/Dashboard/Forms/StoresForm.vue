@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { Form, type GenericObject } from 'vee-validate'
 import TextInput from '@/components/TextInput.vue'
 import * as Yup from 'yup'
+import { FormKit } from '@formkit/vue'
+
 
 const editable = ref(false)
 const storeName = ref('')
@@ -85,6 +87,10 @@ onMounted(async () => {
         {{ editable ? 'Cancelar' : 'Editar' }}
       </button>
     </Form>
+  </div>
+
+  <div>
+    <FormKit type="text" label="teste aqui"></FormKit>
   </div>
 </template>
 

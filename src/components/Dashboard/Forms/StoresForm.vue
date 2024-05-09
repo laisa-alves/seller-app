@@ -90,7 +90,7 @@ onMounted(async () => {
   </div>
 
   <div>
-    <FormKit type="text" label="teste aqui"></FormKit>
+    <FormKit type="select" prefix-icon="email" label="teste aqui"></FormKit>
   </div>
 </template>
 

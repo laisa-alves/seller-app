@@ -13,6 +13,7 @@ import RaitingsView from '@/views/Dashboard/RaitingsView.vue'
 import OrdersView from '@/views/Dashboard/OrdersView.vue'
 import MenuView from '@/views/Dashboard/MenuView.vue'
 import SettingsView from '@/views/Dashboard/SettingsView.vue'
+import SignStore from '@/views/Sign/SignStore.vue'
 
 const auth = new Auth()
 
@@ -75,6 +76,12 @@ const router = createRouter({
       beforeEnter: guest,
       component: SignView
     },
+    {
+      path: '/store/new',
+      name: 'newStore',
+      component: SignStore
+    },
+    
     {
       path: '/dashboard',
       beforeEnter: authGuard,

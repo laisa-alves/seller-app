@@ -1,22 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { onClickOutside } from '@vueuse/core'
 import SidebarItemMenu from './SidebarItemMenu.vue'
 import { RouterLink } from 'vue-router'
 import { Auth } from '@/auth'
+import { useShopStore } from '@/stores/shopStore'
 
+// Users info
 const auth = new Auth()
 const userEmail = auth.currentUser()?.email
 
-const target = ref(null)
+const shopsName = ref<string[]>([])
+const userShops = useShopStore()
 
+watch(
+  () => userShops.isLoading,
+  (newValue) => {
+    if (!newValue) {
+      shopsName.value = userShops.getShopsName
+    }
+  }
+)
+
+// Responsive sidebar
+const target = ref(null)
 const sidebarStore = useSidebarStore()
 
 onClickOutside(target, () => {
   sidebarStore.isSidebarOpen = false
 })
 
+// Categories data
 const menuGroups = ref([
   {
     name: 'Menu',
@@ -179,15 +194,27 @@ const menuGroups = ref([
     <!-- Sidebar header ends -->
 
     <!-- Store info -->
-    <div class="flex mx-4 gap-2 p-2 bg-white rounded-full">
-      <div class="h-14 w-14 rounded-full bg-white overflow-hidden">
-        <img src="@/assets/images/logo_store.png" alt="Logo" />
+    <template v-if="!userShops.isLoading">
+      <div class="flex mx-4 gap-2 p-2 bg-white rounded-full" >
+        <div class="h-14 w-14 rounded-full bg-white overflow-hidden">
+          <img src="@/assets/images/logo_store.png" alt="Logo" />
+        </div>
+        <div class="flex flex-col flex-grow justify-center w-40">
+          <p class="text-sm font-medium tracking-wide truncate">{{ shopsName[0] }}</p>
+          <p class="text-xs front-medium truncate text-gray-500">{{ userEmail }}</p>
+        </div>
       </div>
-      <div class="flex flex-col flex-grow justify-center w-40">
-        <p class="text-sm font-medium tracking-wide truncate">The Sandwich</p>
-        <p class="text-xs front-medium truncate text-gray-500">{{ userEmail }}</p>
+    </template>
+
+    <template v-else>
+      <div class="flex mx-4 gap-2 p-2 bg-white rounded-full animate-pulse">
+        <div class="h-14 w-14 rounded-full bg-gray-200 overflow-hidden"></div>
+        <div class="flex flex-col flex-grow justify-center w-40">
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div class="h-3 bg-gray-200 rounded w-1/2 mt-2"></div>
+        </div>
       </div>
-    </div>
+    </template>
     <!-- Store info end -->
 
     <div class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">

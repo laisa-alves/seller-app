@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 import { $api } from '@/services/api'
+import img from '@/assets/images/generic_logo.png'
+
+const base_url = `${import.meta.env.VITE_API}`
 
 export const useShopStore = defineStore('shopStore', {
   state: () => ({
@@ -7,8 +10,11 @@ export const useShopStore = defineStore('shopStore', {
     isLoading: false
   }),
   getters: {
-    getShopsName(state) {
-      return state.shops.map(shop => shop.name)
+    getShopName(state) {
+      return state.shops.map((shop) => shop.name)
+    },
+    getShopImage(state) {
+      return state.shops.map((shop) => (shop.image_url ? base_url + shop.image_url : img))
     }
   },
   actions: {

@@ -12,15 +12,15 @@ import img from '@/assets/images/generic_logo.png'
 const auth = new Auth()
 const userEmail = auth.currentUser()?.email
 
-const shopName = ref<string[]>([])
-const shopImage = ref<string[]>([])
+const shopName = ref<string>()
+const shopImage = ref<string>()
 const userShops = useShopStore()
 
 watch(
   () => userShops.isLoading,
   (newValue) => {
     if (!newValue) {
-      shopName.value = userShops.getShopName
+      shopName.value = userShops.mainShop.name
       shopImage.value = userShops.getShopImage
     }
   }
@@ -200,10 +200,10 @@ const menuGroups = ref([
     <template v-if="!userShops.isLoading">
       <div class="flex mx-4 gap-2 p-2 bg-white rounded-full">
         <div class="h-14 w-14 rounded-full bg-white overflow-hidden">
-          <img :src="shopImage[0]" alt="Logo" class="w-full h-full object-cover object-center" />
+          <img :src="shopImage" alt="Logo" class="w-full h-full object-cover object-center" />
         </div>
         <div class="flex flex-col flex-grow justify-center w-40">
-          <p class="text-sm font-medium tracking-wide truncate">{{ shopName[0] }}</p>
+          <p class="text-sm font-medium tracking-wide truncate">{{ shopName }}</p>
           <p class="text-xs front-medium truncate text-gray-500">{{ userEmail }}</p>
         </div>
       </div>

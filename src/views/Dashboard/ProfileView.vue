@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import PageTitle from '@/components/Dashboard/PageTitle.vue'
-import StoresForm from '@/components/Dashboard//Forms/StoresForm.vue'
+// import StoresForm from '@/components/Dashboard//Forms/StoresForm.vue'
 import CardComponent from '@/components/Dashboard/Card/CardComponent.vue'
+import StoresTable from '@/components/Dashboard/Tables/StoresTable.vue'
 import { ref } from 'vue'
 
 const pageTitle = ref('Perfil')
@@ -16,12 +17,14 @@ const pageTitle = ref('Perfil')
         <h2
           class="text-deep-orange-600 py-3 text-sm font-medium hover:text-deep-orange-400 md:text-base"
         >
-          Informações da loja
+          Lojas cadastradas
         </h2>
       </div>
-      <StoresForm></StoresForm>
-    </CardComponent>
 
-    
+      <div class="flex flex-col">
+        <StoresTable></StoresTable>
+      </div>
+      <!-- <StoresForm></StoresForm> -->
+    </CardComponent>
   </div>
 </template>

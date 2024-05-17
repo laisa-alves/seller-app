@@ -14,6 +14,7 @@ import OrdersView from '@/views/Dashboard/OrdersView.vue'
 import MenuView from '@/views/Dashboard/MenuView.vue'
 import SettingsView from '@/views/Dashboard/SettingsView.vue'
 import SignStore from '@/views/Sign/SignStore.vue'
+import path from 'path'
 
 const auth = new Auth()
 
@@ -81,7 +82,7 @@ const router = createRouter({
       name: 'newStore',
       component: SignStore
     },
-    
+
     {
       path: '/dashboard',
       beforeEnter: authGuard,
@@ -110,7 +111,14 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'profile',
-          component: ProfileView
+          component: ProfileView,
+          children: [
+            {
+              path: 'edit',
+              name: 'storeEdit',
+              component: ProfileView
+            }
+          ]
         },
         {
           path: 'settings',

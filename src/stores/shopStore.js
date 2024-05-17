@@ -7,17 +7,33 @@ const base_url = `${import.meta.env.VITE_API}`
 export const useShopStore = defineStore('shopStore', {
   state: () => ({
     shops: [],
-    isLoading: false
+    isLoading: false,
+    mainShopId: null
   }),
   getters: {
     getShopName(state) {
       return state.shops.map((shop) => shop.name)
     },
-    getShopImage(state) {
-      return state.shops.map((shop) => (shop.image_url ? base_url + shop.image_url : img))
+    getShopImage() {
+      const mainShopImage = this.mainShop
+
+      if (mainShopImage && mainShopImage.image_url) {
+        return base_url + mainShopImage.image_url
+      } else {
+        return img
+      }
+    },
+    mainShop(state) {
+      return state.shops.find((shop) => shop.id === state.mainShopId)
     }
   },
   actions: {
+    // Set main shop
+    setMainShopId(store, shopId) {
+      store.mainShopId = shopId
+    },
+
+    // Get all shops from user
     async fetchShopsFromAPI() {
       try {
         this.isLoading = true
@@ -30,6 +46,10 @@ export const useShopStore = defineStore('shopStore', {
 
         const response = await $api.stores.get('', headers)
         this.shops = response
+
+        if (response.length > 0) {
+          this.mainShopId = response[0].id
+        }
       } catch (err) {
         console.log(err)
       } finally {

@@ -1,11 +1,24 @@
 <script setup lang="ts">
 import PageTitle from '@/components/Dashboard/PageTitle.vue'
-// import StoresForm from '@/components/Dashboard//Forms/StoresForm.vue'
+import StoresForm from '@/components/Dashboard//Forms/StoresForm.vue'
 import CardComponent from '@/components/Dashboard/Card/CardComponent.vue'
 import StoresTable from '@/components/Dashboard/Tables/StoresTable.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 
 const pageTitle = ref('Perfil')
+
+const route = useRoute()
+
+const getRouteComponent = (path) => path.includes('edit') ? StoresForm : StoresTable
+
+let currentRoute = getRouteComponent(route.path)
+
+watch(() => route.path, (newPath) => {
+  currentRoute = getRouteComponent(newPath)
+})
+
 </script>
 
 <template>
@@ -21,10 +34,8 @@ const pageTitle = ref('Perfil')
         </h2>
       </div>
 
-      <div class="flex flex-col">
-        <StoresTable></StoresTable>
-      </div>
-      <!-- <StoresForm></StoresForm> -->
+      <component :is="currentRoute" :key="route.path"></component>
+      
     </CardComponent>
   </div>
 </template>

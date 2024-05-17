@@ -29,8 +29,8 @@ export const useShopStore = defineStore('shopStore', {
   },
   actions: {
     // Set main shop
-    setMainShopId(store, shopId) {
-      store.mainShopId = shopId
+    setMainShopId(shopId) {
+      this.mainShopId = shopId
     },
 
     // Get all shops from user

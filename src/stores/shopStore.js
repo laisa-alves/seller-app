@@ -3,12 +3,13 @@ import { $api } from '@/services/api'
 import img from '@/assets/images/generic_logo.png'
 
 const base_url = `${import.meta.env.VITE_API}`
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
 export const useShopStore = defineStore('shopStore', {
   state: () => ({
     shops: [],
     isLoading: false,
-    mainShopId: null
+    mainShopId: localStorage.getItem('mainShopId') || null
   }),
   getters: {
     getShopName(state) {
@@ -24,13 +25,15 @@ export const useShopStore = defineStore('shopStore', {
       }
     },
     mainShop(state) {
-      return state.shops.find((shop) => shop.id === state.mainShopId)
+      return state.shops.find((shop) => shop.id === parseInt(state.mainShopId, 10))
     }
   },
   actions: {
     // Set main shop
     setMainShopId(shopId) {
       this.mainShopId = shopId
+      localStorage.setItem('mainShopId', shopId)
+      location.reload()
     },
 
     // Get all shops from user
@@ -38,7 +41,6 @@ export const useShopStore = defineStore('shopStore', {
       try {
         this.isLoading = true
 
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token')
         const headers = {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
@@ -47,18 +49,49 @@ export const useShopStore = defineStore('shopStore', {
         const response = await $api.stores.get('', headers)
         this.shops = response
 
-        if (response.length > 0) {
+        if (response.length > 0 && !this.mainShopId) {
           this.mainShopId = response[0].id
+          localStorage.setItem('mainShopId', this.mainShopId)
         }
       } catch (err) {
         console.log(err)
       } finally {
         this.isLoading = false
       }
-    }
+    },
 
     // Create new shop
     // Edit shop
+    async updateShop(shop) {
+      try {
+        this.isLoading = true
+
+        const body = {
+          store: {
+            name: shop.name
+          }
+        }
+
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+
+        const response = await $api.stores.put(shop.id, body, headers)
+
+        const index = this.shops.findIndex((s) => s.id === shop.id)
+        if (index !== -1) {
+          this.shops[index] = response
+        }
+
+        console.log()
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.isLoading = false
+      }
+    }
+
     // Delete shop
   }
 })

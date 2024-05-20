@@ -4,8 +4,10 @@ import { ref, watchEffect } from 'vue'
 import img from '@/assets/images/generic_logo.png'
 import { useShopStore } from '@/stores/shopStore'
 import { FormKit } from '@formkit/vue'
+import { useRouter } from 'vue-router'
 
 const base_url = `${import.meta.env.VITE_API}`
+const router = useRouter()
 
 // Shops list
 let shopsList = ref([])
@@ -19,6 +21,10 @@ watchEffect(() => {
 
 function toggleMain(shopId) {
   userShops.setMainShopId(shopId)
+}
+
+function addNewStore() {
+  router.push({ name: 'storeNew' })
 }
 </script>
 
@@ -150,6 +156,12 @@ function toggleMain(shopId) {
     </table>
   </div>
   <div class="mt-6 flex justify-end">
-    <FormKit type="button" label="Adicionar loja" prefix-icon="add" outer-class="grow-0" />
+    <FormKit
+      type="button"
+      @click.prevent="addNewStore"
+      label="Adicionar loja"
+      prefix-icon="add"
+      outer-class="grow-0"
+    />
   </div>
 </template>

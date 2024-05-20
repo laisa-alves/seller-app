@@ -7,34 +7,48 @@ import { useShopStore } from '@/stores/shopStore'
 const route = useRoute()
 const router = useRouter()
 const userShops = useShopStore()
-const id = parseInt(route.params.id as string, 10)
 
 const selectedShop = ref()
 const selectedName = ref('')
 const description = defineModel<string>('description')
 
+const id = route.params.id ? parseInt(route.params.id as string, 10) : null
 
-watchEffect(() => {
-  if (!userShops.isLoading) {
-    selectedShop.value = userShops.shops.find((shop) => shop.id === id)
-    selectedName.value = selectedShop.value.name
-  }
-})
+if (id) {
+  watchEffect(() => {
+    if (!userShops.isLoading) {
+      const shop = userShops.shops.find((shop) => shop.id === id)
 
+      if (shop) {
+        selectedShop.value = shop
+        selectedName.value = shop.name
+      }
+    }
+  })
+}
 
-async function handleSubmit(values) {
-  const shopValues = {
-    id: selectedShop.value.id,
+const handleSubmit = async (values) => {
+  const updateShopValues = {
+    id: selectedShop.value ? selectedShop.value.id : null,
     name: values.name
   }
-  
+
+  const createShopValues = {
+    name: values.name
+  }
+
   try {
-    await userShops.updateShop(shopValues)
-    router.push({ name: 'profile'})
+    if (id) {
+      await userShops.updateShop(updateShopValues)
+    } else {
+      await userShops.createShop(createShopValues)
+    }
+    router.push({ name: 'shops' })
   } catch (err) {
     console.error(err)
   }
 }
+
 </script>
 
 <template>

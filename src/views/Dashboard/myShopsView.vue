@@ -1,24 +1,25 @@
 <script setup lang="ts">
 import PageTitle from '@/components/Dashboard/PageTitle.vue'
-import StoresForm from '@/components/Dashboard//Forms/StoresForm.vue'
 import CardComponent from '@/components/Dashboard/Card/CardComponent.vue'
 import StoresTable from '@/components/Dashboard/Tables/StoresTable.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
-
-const pageTitle = ref('Perfil')
+import ShopFormView from './shopFormView.vue'
 
 const route = useRoute()
+const pageTitle = ref('Minhas lojas')
 
-const getRouteComponent = (path) => path.includes('edit') ? StoresForm : StoresTable
+const getRouteComponent = (path: string | string[]) =>
+  path.includes('edit') || path.includes('new') ? ShopFormView : StoresTable
 
 let currentRoute = getRouteComponent(route.path)
 
-watch(() => route.path, (newPath) => {
-  currentRoute = getRouteComponent(newPath)
-})
-
+watch(
+  () => route.path,
+  (newPath) => {
+    currentRoute = getRouteComponent(newPath)
+  }
+)
 </script>
 
 <template>
@@ -35,7 +36,6 @@ watch(() => route.path, (newPath) => {
       </div>
 
       <component :is="currentRoute" :key="route.path"></component>
-      
     </CardComponent>
   </div>
 </template>

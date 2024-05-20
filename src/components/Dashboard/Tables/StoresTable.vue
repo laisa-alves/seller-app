@@ -3,6 +3,7 @@ import ImageCard from '@/components/Dashboard/Card/ImageCard.vue'
 import { ref, watchEffect } from 'vue'
 import img from '@/assets/images/generic_logo.png'
 import { useShopStore } from '@/stores/shopStore'
+import { FormKit } from '@formkit/vue'
 
 const base_url = `${import.meta.env.VITE_API}`
 
@@ -19,7 +20,6 @@ watchEffect(() => {
 function toggleMain(shopId) {
   userShops.setMainShopId(shopId)
 }
-
 </script>
 
 <template>
@@ -39,12 +39,12 @@ function toggleMain(shopId) {
       <tbody v-if="!userShops.isLoading">
         <tr
           v-for="(item, index) in shopsList"
-          :key="index"
+          :key="item.id"
           class="bg-white border-b hover:bg-gray-50"
         >
           <!-- Logo -->
           <td class="px-6 py-4">
-            <ImageCard :src="base_url + item.image_url"></ImageCard>
+            <ImageCard :src="item.image_url ? base_url + item.image_url : img"></ImageCard>
           </td>
           <!-- Name -->
           <td class="px-6 py-4">{{ item.name }}</td>
@@ -79,7 +79,10 @@ function toggleMain(shopId) {
           <td class="px-6 py-4">
             <div class="flex gap-3">
               <!-- Edit icon -->
-              <RouterLink :to="{ name: 'storeEdit' }" class="hover:text-deep-orange-500">
+              <RouterLink
+                :to="{ name: 'storeEdit', params: { id: item.id } }"
+                class="hover:text-deep-orange-500"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -145,5 +148,8 @@ function toggleMain(shopId) {
         </tr>
       </tbody>
     </table>
+  </div>
+  <div class="mt-6 flex justify-end">
+    <FormKit type="button" label="Adicionar loja" prefix-icon="add" outer-class="grow-0" />
   </div>
 </template>

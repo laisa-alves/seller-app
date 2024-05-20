@@ -114,9 +114,10 @@ const router = createRouter({
           component: ProfileView,
           children: [
             {
-              path: 'edit',
+              path: ':id/edit',
               name: 'storeEdit',
-              component: ProfileView
+              component: ProfileView,
+              props: true
             }
           ]
         },

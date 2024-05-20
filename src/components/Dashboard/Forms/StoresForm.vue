@@ -1,62 +1,40 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { FormKit } from '@formkit/vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useShopStore } from '@/stores/shopStore'
 
-interface StoreData {
-  id?: number
-  name?: string
-}
+const route = useRoute()
+const router = useRouter()
+const userShops = useShopStore()
+const id = parseInt(route.params.id as string, 10)
 
-const storeData = ref<StoreData>({})
-const storeName = ref('')
+const selectedShop = ref()
+const selectedName = ref('')
 const description = defineModel<string>('description')
-const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-async function handleSubmit(values) {
-  const body = {
-    store: {
-      name: values.name
-    }
-  }
 
-  await fetch(import.meta.env.VITE_API + 'stores/' + storeData.value['id'], {
-    method: 'PUT',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(body)
-  })
-}
-
-onMounted(async () => {
-  if (!token) {
-    console.error('Token JWT não encontrado')
-    return
-  }
-
-  try {
-    const response = await fetch(import.meta.env.VITE_API + 'stores', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      }
-    })
-    if (!response.ok) {
-      console.error('Erro ao buscar dados:', response.statusText)
-      return
-    }
-
-    const data = await response.json()
-    storeData.value = data[0]
-    storeName.value = data[0].name
-  } catch (error) {
-    console.error('Erro ao buscar dados:', error)
+watchEffect(() => {
+  if (!userShops.isLoading) {
+    selectedShop.value = userShops.shops.find((shop) => shop.id === id)
+    selectedName.value = selectedShop.value.name
   }
 })
+
+
+async function handleSubmit(values) {
+  const shopValues = {
+    id: selectedShop.value.id,
+    name: values.name
+  }
+  
+  try {
+    await userShops.updateShop(shopValues)
+    router.push({ name: 'profile'})
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>
 
 <template>
@@ -69,7 +47,7 @@ onMounted(async () => {
         type="text"
         name="name"
         label="Nome da loja"
-        v-model="storeName"
+        v-model="selectedName"
         validation="required|length:3"
       />
 

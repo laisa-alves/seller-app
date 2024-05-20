@@ -61,6 +61,29 @@ export const useShopStore = defineStore('shopStore', {
     },
 
     // Create new shop
+    async createShop(shop) {
+      try {
+        this.isLoading = true
+
+        const body = {
+          store: {
+            name: shop.name
+          }
+        }
+
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+        const response = await $api.stores.post(body, headers)
+        this.shops.push(response)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.isLoading = false
+      }
+    },
+
     // Edit shop
     async updateShop(shop) {
       try {

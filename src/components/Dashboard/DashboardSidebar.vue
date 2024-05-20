@@ -132,7 +132,7 @@ const menuGroups = ref([
           />
         </svg>`,
         label: 'Minhas lojas',
-        route: { name: 'profile' }
+        route: { name: 'shops' }
       },
       {
         icon: `<svg

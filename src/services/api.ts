@@ -1,4 +1,4 @@
-import { Auth } from '../auth.ts'
+import { Auth } from '../auth'
 const auth = new Auth()
 
 class BaseApiService {
@@ -41,6 +41,9 @@ class BaseApiService {
       auth.signOut()
       location.reload()
     }
+    // if (response.status === 204) {
+    //   location.reload()
+    // }
   }
 }
 

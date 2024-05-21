@@ -3,7 +3,6 @@ import DashboardSidebar from '@/components/Dashboard/DashboardSidebar.vue'
 import DashboardHeader from '@/components/Dashboard/DashboardHeader.vue'
 import { RouterView } from 'vue-router'
 import { useShopStore } from '@/stores/shopStore'
-import { onMounted } from 'vue'
 
 const userShops = useShopStore()
 userShops.fetchShopsFromAPI()

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import img from '@/assets/images/generic_logo.png'
-import { previewImg } from '@/mixins/previewImageMixin.ts'
+import { previewImg } from '@/mixins/previewImageMixin'
 
 const step = ref(0)
 const imageSrc = ref(img)
@@ -29,7 +29,7 @@ async function submitForm(values) {
 
 
   try {
-    const response = await fetch(import.meta.env.VITE_API + 'stores', {
+    await fetch(import.meta.env.VITE_API + 'stores', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

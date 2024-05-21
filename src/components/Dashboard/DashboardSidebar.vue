@@ -6,7 +6,6 @@ import SidebarItemMenu from './SidebarItemMenu.vue'
 import { RouterLink } from 'vue-router'
 import { Auth } from '@/auth'
 import { useShopStore } from '@/stores/shopStore'
-import img from '@/assets/images/generic_logo.png'
 
 // Users info
 const auth = new Auth()

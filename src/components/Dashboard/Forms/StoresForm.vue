@@ -1,19 +1,34 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, computed } from 'vue'
 import { FormKit } from '@formkit/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useShopStore } from '@/stores/shopStore'
+import ImageCard from '../Card/ImageCard.vue'
+import defaultImg from '@/assets/images/generic_logo.png'
+import { previewImg } from '@/mixins/previewImageMixin.ts'
 
 const route = useRoute()
 const router = useRouter()
+const base_url = `${import.meta.env.VITE_API}`
+
+// Call shopStores
 const userShops = useShopStore()
-
 const selectedShop = ref()
-const selectedName = ref('')
-const description = defineModel<string>('description')
 
+// Add data
+const shopName = ref('')
+const shopImg = ref()
+const shopDescription = defineModel<string>('description')
+
+const computedSrc = computed(() => {
+  if (shopImg.value?.startsWith('data:image')) {
+    return shopImg.value
+  }
+  return shopImg.value ? base_url + shopImg.value : defaultImg
+})
+
+// Check route params
 const id = route.params.id ? parseInt(route.params.id as string, 10) : null
-
 if (id) {
   watchEffect(() => {
     if (!userShops.isLoading) {
@@ -21,12 +36,19 @@ if (id) {
 
       if (shop) {
         selectedShop.value = shop
-        selectedName.value = shop.name
+        shopName.value = shop.name
+        shopImg.value = shop.image_url
       }
     }
   })
 }
 
+// Change img preview
+const handleChange = (event: Event) => {
+  previewImg(event, shopImg)
+}
+
+// Send request
 const handleSubmit = async (values) => {
   const updateShopValues = {
     id: selectedShop.value ? selectedShop.value.id : null,
@@ -48,7 +70,6 @@ const handleSubmit = async (values) => {
     console.error(err)
   }
 }
-
 </script>
 
 <template>
@@ -57,11 +78,29 @@ const handleSubmit = async (values) => {
   <!-- Edição das informações -->
   <div class="flex flex-col">
     <FormKit type="form" name="updateStore" submit-label="Salvar" @submit="handleSubmit">
+      <div class="gap-4 mb-6 sm:flex max-w-[24rem]">
+        <div>
+          <ImageCard :src="computedSrc" h="h-24" w="w-24"></ImageCard>
+        </div>
+
+        <FormKit
+          type="file"
+          name="image"
+          accept="image/*"
+          file-remove-icon="close"
+          prefix-icon="upload"
+          @change="handleChange"
+          label="Selecione sua logo"
+          prefix-icon-class="text-[#ff9800]"
+          inner-class="bg-gray-50 border-[#ff9800]"
+        />
+      </div>
+
       <FormKit
         type="text"
         name="name"
         label="Nome da loja"
-        v-model="selectedName"
+        v-model="shopName"
         validation="required|length:3"
       />
 
@@ -79,8 +118,8 @@ const handleSubmit = async (values) => {
         type="textarea"
         name="description"
         label="Descrição"
-        v-model="description"
-        :help="`${description ? description.length : 0} / 200 caracteres`"
+        v-model="shopDescription"
+        :help="`${shopDescription ? shopDescription.length : 0} / 200 caracteres`"
         validation="length:0,200"
         validation-visibility="live"
       />

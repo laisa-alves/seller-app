@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useShopStore } from '@/stores/shopStore'
 import ImageCard from '../Card/ImageCard.vue'
 import defaultImg from '@/assets/images/generic_logo.png'
-import { previewImg } from '@/mixins/previewImageMixin.ts'
+import { previewImg } from '@/mixins/previewImageMixin'
 
 const route = useRoute()
 const router = useRouter()
@@ -27,12 +27,19 @@ const computedSrc = computed(() => {
   return shopImg.value ? base_url + shopImg.value : defaultImg
 })
 
+// Create shop interface
+interface Shop {
+  id: number;
+  name: string;
+  image_url: string;
+}
+
 // Check route params
 const id = route.params.id ? parseInt(route.params.id as string, 10) : null
 if (id) {
   watchEffect(() => {
     if (!userShops.isLoading) {
-      const shop = userShops.shops.find((shop) => shop.id === id)
+      const shop = userShops.shops.find((shop: Shop) => shop.id === id)
 
       if (shop) {
         selectedShop.value = shop
@@ -48,8 +55,14 @@ const handleChange = (event: Event) => {
   previewImg(event, shopImg)
 }
 
+// Create values interface
+interface Values {
+  name: string;
+  image: { file: any }[];
+}
+
 // Send request
-const handleSubmit = async (values) => {
+const handleSubmit = async (values: Values) => {
   try {
     if (selectedShop.value && selectedShop.value.id) {
       // Update shop

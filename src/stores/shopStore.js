@@ -104,15 +104,34 @@ export const useShopStore = defineStore('shopStore', {
         if (index !== -1) {
           this.shops[index] = response
         }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.isLoading = false
+      }
+    },
 
-        console.log()
+    // Delete shop
+    async deleteShop(id) {
+      try {
+        this.isLoading = true
+
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+
+        await $api.stores.delete(id, headers)
+        
+        const index = this.shops.findIndex((s) => s.id === id)
+        if (index !== -1) {
+          this.shops.splice(index, 1)
+        }
       } catch (err) {
         console.error(err)
       } finally {
         this.isLoading = false
       }
     }
-
-    // Delete shop
   }
 })

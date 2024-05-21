@@ -27,7 +27,7 @@ class BaseApiService {
           Accept: 'application/json',
           ...headers
         },
-        body: JSON.stringify(data)
+        body: data instanceof FormData ? data : JSON.stringify(data)
       })
       this.handleResponseStatus(response)
       return await response.json()

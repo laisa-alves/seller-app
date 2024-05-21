@@ -65,17 +65,16 @@ export const useShopStore = defineStore('shopStore', {
       try {
         this.isLoading = true
 
-        const body = {
-          store: {
-            name: shop.name
-          }
+        const formData = new FormData()
+        formData.append('store[name]', shop.name)
+        if (shop.image) {
+          formData.append('store[image]', shop.image)
         }
 
         const headers = {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         }
-        const response = await $api.stores.post(body, headers)
+        const response = await $api.stores.post(formData, headers)
         this.shops.push(response)
       } catch (err) {
         console.error(err)
@@ -89,18 +88,17 @@ export const useShopStore = defineStore('shopStore', {
       try {
         this.isLoading = true
 
-        const body = {
-          store: {
-            name: shop.name
-          }
+        const formData = new FormData()
+        formData.append('store[name]', shop.name)
+        if (shop.image) {
+          formData.append('store[image]', shop.image)
         }
 
         const headers = {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         }
 
-        const response = await $api.stores.put(shop.id, body, headers)
+        const response = await $api.stores.put(shop.id, formData, headers)
 
         const index = this.shops.findIndex((s) => s.id === shop.id)
         if (index !== -1) {

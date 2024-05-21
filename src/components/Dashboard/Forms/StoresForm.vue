@@ -50,19 +50,21 @@ const handleChange = (event: Event) => {
 
 // Send request
 const handleSubmit = async (values) => {
-  const updateShopValues = {
-    id: selectedShop.value ? selectedShop.value.id : null,
-    name: values.name
-  }
-
-  const createShopValues = {
-    name: values.name
-  }
-
   try {
-    if (id) {
+    if (selectedShop.value && selectedShop.value.id) {
+      // Update shop
+      const updateShopValues = {
+        id: selectedShop.value.id,
+        name: values.name,
+        image: values.image && values.image[0] ? values.image[0].file : null
+      }
       await userShops.updateShop(updateShopValues)
     } else {
+      // Create new shop
+      const createShopValues = {
+        name: values.name,
+        image: values.image && values.image[0] ? values.image[0].file : null
+      }
       await userShops.createShop(createShopValues)
     }
     router.push({ name: 'shops' })
@@ -73,10 +75,9 @@ const handleSubmit = async (values) => {
 </script>
 
 <template>
-  <!-- Edição da Logo -->
-
   <!-- Edição das informações -->
   <div class="flex flex-col">
+    <!-- Edição da Logo -->
     <FormKit type="form" name="updateStore" submit-label="Salvar" @submit="handleSubmit">
       <div class="gap-4 mb-6 sm:flex max-w-[24rem]">
         <div>

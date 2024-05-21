@@ -39,6 +39,7 @@ class BaseApiService {
   handleResponseStatus(response: Response): void {
     if (response.status === 401) {
       auth.signOut()
+      location.reload()
     }
   }
 }

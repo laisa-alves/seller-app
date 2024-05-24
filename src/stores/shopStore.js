@@ -38,6 +38,8 @@ export const useShopStore = defineStore('shopStore', {
 
     // Get all shops from user
     async fetchShopsFromAPI() {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+
       try {
         this.isLoading = true
 
@@ -122,7 +124,7 @@ export const useShopStore = defineStore('shopStore', {
         }
 
         await $api.stores.delete(id, headers)
-        
+
         const index = this.shops.findIndex((s) => s.id === id)
         if (index !== -1) {
           this.shops.splice(index, 1)

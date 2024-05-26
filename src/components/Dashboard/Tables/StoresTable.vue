@@ -48,11 +48,11 @@ const deleteShop = async (id: number) => {
       <!-- Table header -->
       <thead class="text-sm text-gray-800 uppercase bg-gray-200">
         <tr>
-          <th scope="col" class="px-6 py-3">Logo</th>
-          <th scope="col" class="px-6 py-3">Nome</th>
-          <th scope="col" class="px-6 py-3">Status</th>
-          <th scope="col" class="px-6 py-3">Loja principal</th>
-          <th scope="col" class="px-6 py-3">Ações</th>
+          <th scope="col" class="px-6 py-3 text-center">Logo</th>
+          <th scope="col" class="px-6 py-3 text-center">Nome</th>
+          <th scope="col" class="px-6 py-3 text-center">Status</th>
+          <th scope="col" class="px-6 py-3 text-center">Loja principal</th>
+          <th scope="col" class="px-6 py-3 text-center">Ações</th>
         </tr>
       </thead>
       <!-- Table body -->
@@ -64,12 +64,16 @@ const deleteShop = async (id: number) => {
         >
           <!-- Logo -->
           <td class="px-6 py-4">
-            <ImageCard :src="item.image_url ? base_url + item.image_url : img"></ImageCard>
+            <div class="flex justify-center items-center">
+              <ImageCard :src="item.image_url ? base_url + item.image_url : img"></ImageCard>
+            </div>
           </td>
+
           <!-- Name -->
-          <td class="px-6 py-4">{{ item.name }}</td>
+          <td class="px-6 py-4 text-center">{{ item.name }}</td>
+
           <!-- Status -->
-          <td class="px-6 py-4">
+          <td class="px-6 py-4 items-center">
             <p
               class="inline-flex rounded-full bg-opacity-10 py-1 px-3"
               :class="{
@@ -83,7 +87,7 @@ const deleteShop = async (id: number) => {
           <!-- Main store -->
           <td class="px-6 py-4">
             <!-- Toggle -->
-            <label class="inline-flex items-center cursor-pointer">
+            <label class="flex items-center justify-center cursor-pointer">
               <input
                 type="checkbox"
                 @click="toggleMain(item.id)"
@@ -97,7 +101,7 @@ const deleteShop = async (id: number) => {
           </td>
           <!-- Actions -->
           <td class="px-6 py-4">
-            <div class="flex gap-3">
+            <div class="flex gap-3 justify-center items-center">
               <!-- Edit icon -->
               <RouterLink
                 :to="{ name: 'storeEdit', params: { id: item.id } }"

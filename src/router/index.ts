@@ -15,6 +15,7 @@ import MenuView from '@/views/Dashboard/MenuView.vue'
 import SettingsView from '@/views/Dashboard/SettingsView.vue'
 import shopFormView from '@/views/Dashboard/shopFormView.vue'
 import SignStore from '@/views/Sign/SignStore.vue'
+import productFormView from '@/views/Dashboard/DashboardView.vue'
 
 const auth = new Auth()
 
@@ -106,7 +107,20 @@ const router = createRouter({
         {
           path: 'menu',
           name: 'menu',
-          component: MenuView
+          component: MenuView,
+          children: [
+            {
+              path: ':id/edit',
+              name: 'productEdit',
+              component: productFormView,
+              props: true
+            },
+            {
+              path: 'new',
+              name: 'productNew',
+              component: productFormView
+            }
+          ]
         },
         {
           path: 'shops',

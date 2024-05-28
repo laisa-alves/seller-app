@@ -1,13 +1,40 @@
 <script setup lang="ts">
-import router from '@/router';
+import router from '@/router'
+import { useProductStore } from '@/stores/productsStore.js'
+import { onMounted, ref, watchEffect } from 'vue'
 
+const productsStore = useProductStore()
 
-function addNewProduct() {
-  router.push({ name: 'productNew' })
+// Create productList interface
+interface ProductsList {
+  id: number
+  image_url: string
+  title: string
+  price: number
+  description: string
 }
+
+let productsList = ref<ProductsList[]>([])
+
+watchEffect(() => {
+  if (!productsStore.isLoading) {
+    productsList.value = productsStore.products
+  }
+})
+
+onMounted(async () => {
+  productsStore.fetchProductsFromAPI()
+}),
+  function addNewProduct() {
+    router.push({ name: 'productNew' })
+  }
 </script>
 
 <template>
+  <div v-if="!productsStore.isLoading">
+    {{ productsStore }}
+  </div>
+
   <div class="rounded-md border border-blue-gray-50 bg-white shadow-sm">
     <div class="mb-14 w-full">
       <!-- === Table actions header === -->
@@ -192,8 +219,8 @@ function addNewProduct() {
           </thead>
 
           <!-- Table body -->
-          <tbody>
-            <tr class="border-b">
+          <tbody v-if="!productsStore.isLoading">
+            <tr v-for="product in productsList" :key="product.id" class="border-b">
               <!-- Image and title -->
               <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                 <div class="flex items-center gap-3">
@@ -203,12 +230,12 @@ function addNewProduct() {
                       class="w-full h-full object-cover object-center rounded-md"
                     />
                   </div>
-                  Bolo de chocolate
+                  {{ product.title }}
                 </div>
               </th>
 
               <!-- Price -->
-              <td class="px-4 py-3 text-center">R$ 20,00</td>
+              <td class="px-4 py-3 text-center">R$ {{ product.price }}</td>
 
               <!-- Category -->
               <td class="px-4 py-3 text-center">Doces</td>
@@ -228,7 +255,10 @@ function addNewProduct() {
               <td class="px-4 py-3">
                 <div class="flex gap-3 justify-center items-center">
                   <!-- Edit icon -->
-                  <RouterLink :to="{ name: 'productEdit', params: { id: '1' }}" class="hover:text-deep-orange-500">
+                  <RouterLink
+                    :to="{ name: 'productEdit', params: { id: '1' } }"
+                    class="hover:text-deep-orange-500"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

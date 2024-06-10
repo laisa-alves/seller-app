@@ -7,6 +7,28 @@ import ImageCard from '../Card/ImageCard.vue'
 import defaultImg from '@/assets/images/generic_logo.png'
 import { previewImg } from '@/mixins/previewImageMixin'
 
+// Create categories for stores
+const categories = [
+  { id: 'BURGER', name: 'Hambúrguer' },
+  { id: 'PIZZA', name: 'Pizza' },
+  { id: 'JAPANESE', name: 'Japonesa' },
+  { id: 'DESSERTS', name: 'Sobremesa' },
+  { id: 'VEGETARIAN', name: 'Vegetariana' },
+  { id: 'BAKERY', name: 'Padaria' },
+  { id: 'PASTA', name: 'Massa' },
+  { id: 'BRAZILIAN', name: 'Brasileira' },
+  { id: 'HEALTHY', name: 'Saudável' },
+  { id: 'FAST_FOOD', name: 'Fast food' },
+  { id: 'VARIETY_FOOD', name: 'Variada' }
+]
+
+const formattedCategories = computed(() =>
+  categories.map((category) => ({
+    value: category.id,
+    label: category.name
+  }))
+)
+
 const route = useRoute()
 const router = useRouter()
 const base_url = `${import.meta.env.VITE_API}`
@@ -18,7 +40,9 @@ const selectedShop = ref()
 // Add data
 const shopName = ref('')
 const shopImg = ref()
-const shopDescription = defineModel<string>('description')
+const shopDescription = ref('')
+const shopCategory = defineModel<string>('category')
+const shopActive = ref(true)
 
 const computedSrc = computed(() => {
   if (shopImg.value?.startsWith('data:image')) {
@@ -31,7 +55,10 @@ const computedSrc = computed(() => {
 interface Shop {
   id: number
   name: string
-  image_url: string
+  image_url: string,
+  description: string,
+  category: string,
+  active: boolean
 }
 
 // Check route params
@@ -45,6 +72,9 @@ if (id) {
         selectedShop.value = shop
         shopName.value = shop.name
         shopImg.value = shop.image_url
+        shopDescription.value = shop.description
+        shopCategory.value = shop.category
+        shopActive.value = shop.active
       }
     }
   })
@@ -59,24 +89,35 @@ const handleChange = (event: Event) => {
 interface Values {
   name: string
   image: { file: any }[]
+  category: string
+  description: string
+  active: boolean
 }
 
 // Send request
 const handleSubmit = async (values: Values) => {
+  console.log(values)
   try {
     if (selectedShop.value && selectedShop.value.id) {
       // Update shop
       const updateShopValues = {
         id: selectedShop.value.id,
         name: values.name,
-        image: values.image && values.image[0] ? values.image[0].file : null
+        image: values.image && values.image[0] ? values.image[0].file : null,
+        category: values.category,
+        description: values.description,
+        active: values.active
       }
+      console.log(updateShopValues)
       await userShops.updateShop(updateShopValues)
     } else {
       // Create new shop
       const createShopValues = {
         name: values.name,
-        image: values.image && values.image[0] ? values.image[0].file : null
+        image: values.image && values.image[0] ? values.image[0].file : null,
+        category: values.category,
+        description: values.description,
+        active: values.active
       }
       await userShops.createShop(createShopValues)
     }
@@ -108,7 +149,14 @@ const handleSubmit = async (values: Values) => {
   <!-- Edição das informações -->
   <div class="flex flex-col">
     <!-- Edição da Logo -->
-    <FormKit type="form" name="updateStore" submit-label="Salvar" @submit="handleSubmit">
+    <FormKit
+      type="form"
+      id="shopForm"
+      name="updateStore"
+      submit-label="Salvar"
+      @submit="handleSubmit"
+      :actions="false"
+    >
       <div class="gap-4 mb-6 sm:flex max-w-[24rem]">
         <div>
           <ImageCard :src="computedSrc" h="h-24" w="w-24"></ImageCard>
@@ -139,10 +187,12 @@ const handleSubmit = async (values: Values) => {
         type="select"
         name="category"
         label="Categoria"
-        :options="['Italiana', 'Hamburger', 'Pizza', 'Japonesa']"
+        :options="formattedCategories"
+        v-model="shopCategory"
         placeholder="Selecione uma categoria"
         select-icon="down"
         help="Esta é a informação que aparece ao lado da sua loja na listagem e classifica-a nas listas."
+        validation="required"
       />
 
       <FormKit
@@ -154,6 +204,29 @@ const handleSubmit = async (values: Values) => {
         validation="length:0,200"
         validation-visibility="live"
       />
+
+      <FormKit
+        type="select"
+        name="active"
+        label="Status da loja"
+        v-model="shopActive"
+        select-icon="down"
+        :options="[
+          { value: true, label: 'Ativa' },
+          { value: false, label: 'Inativa' }
+        ]"
+        :help="`Sua loja está ${shopActive ? 'ativa e aparecerá na listagem de lojas' : 'inativa e não aparecerá na lista de lojas.'}`"
+      />
+
+      <div class="inline-flex gap-3 mt-8">
+        <FormKit type="submit" label="Enviar" outer-class="flex justify-end" />
+        <FormKit
+          type="button"
+          label="Cancelar"
+          outer-class="flex justify-end"
+          @click="$formkit.reset('shopForm')"
+        ></FormKit>
+      </div>
     </FormKit>
   </div>
 </template>

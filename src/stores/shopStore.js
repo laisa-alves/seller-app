@@ -69,6 +69,10 @@ export const useShopStore = defineStore('shopStore', {
 
         const formData = new FormData()
         formData.append('store[name]', shop.name)
+        formData.append('store[category]', shop.category)
+        formData.append('store[description]', shop.description)
+        formData.append('store[active]', shop.active)
+
         if (shop.image) {
           formData.append('store[image]', shop.image)
         }
@@ -92,6 +96,10 @@ export const useShopStore = defineStore('shopStore', {
 
         const formData = new FormData()
         formData.append('store[name]', shop.name)
+        formData.append('store[category]', shop.category)
+        formData.append('store[description]', shop.description || '')
+        formData.append('store[active]', shop.active)
+      
         if (shop.image) {
           formData.append('store[image]', shop.image)
         }

@@ -12,9 +12,9 @@ const userShops = useShopStore()
 
 // Create shopList interface
 interface ShopList {
-  id: number,
-  image_url: string,
-  name: string,
+  id: number
+  image_url: string
+  name: string
   status: string
 }
 
@@ -39,7 +39,6 @@ const deleteShop = async (id: number) => {
     await userShops.deleteShop(id)
   }
 }
-
 </script>
 
 <template>
@@ -57,11 +56,7 @@ const deleteShop = async (id: number) => {
       </thead>
       <!-- Table body -->
       <tbody v-if="!userShops.isLoading">
-        <tr
-          v-for="(item) in shopsList"
-          :key="item.id"
-          class="bg-white border-b hover:bg-gray-50"
-        >
+        <tr v-for="item in shopsList" :key="item.id" class="bg-white border-b hover:bg-gray-50">
           <!-- Logo -->
           <td class="px-6 py-4">
             <div class="flex justify-center items-center">
@@ -74,15 +69,17 @@ const deleteShop = async (id: number) => {
 
           <!-- Status -->
           <td class="px-6 py-4 items-center">
-            <p
-              class="inline-flex rounded-full bg-opacity-10 py-1 px-3"
-              :class="{
-                'bg-amber-500 text-amber-900': item.status === 'Suspenso',
-                'bg-green-500 text-green-900': item.status === 'Ativo'
-              }"
-            >
-              {{ item.status }}
-            </p>
+            <div class="flex justify-center">
+              <p
+                class="inline-flex rounded-full bg-opacity-10 py-1 px-3"
+                :class="{
+                  'bg-amber-500 text-amber-900': !item.active,
+                  'bg-green-500 text-green-900': item.active
+                }"
+              >
+                {{ item.active ? 'Loja ativa' : 'Loja inativa' }}
+              </p>
+            </div>
           </td>
           <!-- Main store -->
           <td class="px-6 py-4">

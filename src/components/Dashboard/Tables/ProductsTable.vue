@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import router from '@/router'
+import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productsStore.js'
 import { onMounted, ref, watchEffect } from 'vue'
+import statusBadge from '@/components/Dashboard/Tables/components/StatusBadge.vue'
+import img from '@/assets/images/generic_product.png'
 
+const base_url = `${import.meta.env.VITE_API}`
+const router = useRouter()
 const productsStore = useProductStore()
 
 // Create productList interface
@@ -10,8 +14,10 @@ interface ProductsList {
   id: number
   image_url: string
   title: string
+  category: string
   price: number
   description: string
+  active: boolean
 }
 
 let productsList = ref<ProductsList[]>([])
@@ -24,10 +30,11 @@ watchEffect(() => {
 
 onMounted(async () => {
   productsStore.fetchProductsFromAPI()
-}),
-  function addNewProduct() {
-    router.push({ name: 'productNew' })
-  }
+})
+
+function addNewProduct() {
+  router.push({ name: 'productNew' })
+}
 </script>
 
 <template>
@@ -226,7 +233,7 @@ onMounted(async () => {
                 <div class="flex items-center gap-3">
                   <div class="h-16 w-16 rounded-md">
                     <img
-                      src="@/assets/images/generic_product.png"
+                      :src="product.image_url ? base_url + product.image_url : img"
                       class="w-full h-full object-cover object-center rounded-md"
                     />
                   </div>
@@ -235,20 +242,18 @@ onMounted(async () => {
               </th>
 
               <!-- Price -->
-              <td class="px-4 py-3 text-center">R$ {{ product.price }}</td>
+              <td class="px-4 py-3 text-center">{{ $formatCurrency(product.price) }}</td>
 
               <!-- Category -->
-              <td class="px-4 py-3 text-center">Doces</td>
+              <td class="px-4 py-3 text-center">{{ product.category }}</td>
 
               <!-- Toggle active / inactive -->
               <td class="px-4 py-3">
-                <!-- Toggle -->
-                <label class="flex items-center justify-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" />
-                  <div
-                    class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-deep-orange-400"
-                  ></div>
-                </label>
+                <statusBadge
+                  :isActive="product.active"
+                  active_text="Produto ativo"
+                  inactive_text="Produto inativo"
+                />
               </td>
 
               <!-- Actions -->
@@ -256,7 +261,7 @@ onMounted(async () => {
                 <div class="flex gap-3 justify-center items-center">
                   <!-- Edit icon -->
                   <RouterLink
-                    :to="{ name: 'productEdit', params: { id: '1' } }"
+                    :to="{ name: 'productEdit', params: { id: product.id } }"
                     class="hover:text-deep-orange-500"
                   >
                     <svg

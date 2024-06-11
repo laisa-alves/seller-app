@@ -5,6 +5,7 @@ import img from '@/assets/images/generic_logo.png'
 import { useShopStore } from '@/stores/shopStore'
 import { FormKit } from '@formkit/vue'
 import { useRouter } from 'vue-router'
+import statusBadge from '@/components/Dashboard/Tables/components/StatusBadge.vue'
 
 const base_url = `${import.meta.env.VITE_API}`
 const router = useRouter()
@@ -16,6 +17,7 @@ interface ShopList {
   image_url: string
   name: string
   status: string
+  active: boolean
 }
 
 let shopsList = ref<ShopList[]>([])
@@ -69,17 +71,7 @@ const deleteShop = async (id: number) => {
 
           <!-- Status -->
           <td class="px-6 py-4 items-center">
-            <div class="flex justify-center">
-              <p
-                class="inline-flex rounded-full bg-opacity-10 py-1 px-3"
-                :class="{
-                  'bg-amber-500 text-amber-900': !item.active,
-                  'bg-green-500 text-green-900': item.active
-                }"
-              >
-                {{ item.active ? 'Loja ativa' : 'Loja inativa' }}
-              </p>
-            </div>
+            <statusBadge :isActive="item.active" active_text="Loja ativa" inactive_text="Loja inativa" />
           </td>
           <!-- Main store -->
           <td class="px-6 py-4">

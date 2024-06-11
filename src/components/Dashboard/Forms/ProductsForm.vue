@@ -70,6 +70,7 @@ if (id) {
       const product = productStore.products.find((product: Product) => product.id === id)
 
       if (product) {
+        selectedProduct.value = product
         productTitle.value = product.title
         productPrice.value = product.price
         productCategory.value = product.category

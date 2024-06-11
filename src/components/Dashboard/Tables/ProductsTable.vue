@@ -35,13 +35,15 @@ onMounted(async () => {
 function addNewProduct() {
   router.push({ name: 'productNew' })
 }
+
+const deleteProduct = async (id: number) => {
+  if (confirm('Você tem certeza que deseja deletar este produto?')) {
+    await productsStore.deleteProduct(id)
+  }
+}
 </script>
 
 <template>
-  <div v-if="!productsStore.isLoading">
-    {{ productsStore }}
-  </div>
-
   <div class="rounded-md border border-blue-gray-50 bg-white shadow-sm">
     <div class="mb-14 w-full">
       <!-- === Table actions header === -->
@@ -280,7 +282,7 @@ function addNewProduct() {
                     </svg>
                   </RouterLink>
                   <!-- Exclude icon -->
-                  <button class="hover:text-red-600">
+                  <button class="hover:text-red-600" @click="deleteProduct(product.id)">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

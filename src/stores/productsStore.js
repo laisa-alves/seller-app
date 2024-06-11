@@ -50,7 +50,7 @@ export const useProductStore = defineStore('productStore', {
         formData.append('product[price]', product.price)
         formData.append('product[category]', product.category)
         formData.append('product[description]', product.description)
-        formData.append('product[active', product.active)
+        formData.append('product[active]', product.active)
 
         if (product.image) {
           formData.append('product[image]', product.image)
@@ -81,7 +81,7 @@ export const useProductStore = defineStore('productStore', {
         formData.append('product[price]', product.price)
         formData.append('product[category]', product.category)
         formData.append('product[description]', product.description || '')
-        formData.append('product[active', product.active)
+        formData.append('product[active]', product.active)
 
         if (product.image) {
           formData.append('product[image]', product.image)
@@ -92,7 +92,36 @@ export const useProductStore = defineStore('productStore', {
         }
 
         const response = await $api.products.putProduct(mainShopId, product.id, formData, headers)
-        this.products = this.products.map((p) => (p.id === product.id ? response : p))
+
+        const index = this.products.findIndex((p) => p.id === product.id)
+        if (index !== -1) {
+          this.products[index] = response
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    // Delete product
+    async deleteProduct(id) {
+      const shopStore = useShopStore()
+      const mainShopId = shopStore.mainShopId
+      try {
+        this.isLoading = true
+
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+
+        await $api.products.deleteProduct(mainShopId, id, headers)
+
+        const index = this.products.findIndex((p) => p.id === id)
+        if (index !== -1) {
+          this.products.splice(index, 1)
+        }
       } catch (err) {
         console.error(err)
       } finally {

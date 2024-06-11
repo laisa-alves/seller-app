@@ -41,7 +41,7 @@ const selectedShop = ref()
 const shopName = ref('')
 const shopImg = ref()
 const shopDescription = ref('')
-const shopCategory = defineModel<string>('category')
+const shopCategory = ref()
 const shopActive = ref(true)
 
 const computedSrc = computed(() => {
@@ -96,7 +96,6 @@ interface Values {
 
 // Send request
 const handleSubmit = async (values: Values) => {
-  console.log(values)
   try {
     if (selectedShop.value && selectedShop.value.id) {
       // Update shop
@@ -108,7 +107,6 @@ const handleSubmit = async (values: Values) => {
         description: values.description,
         active: values.active
       }
-      console.log(updateShopValues)
       await userShops.updateShop(updateShopValues)
     } else {
       // Create new shop
@@ -153,7 +151,6 @@ const handleSubmit = async (values: Values) => {
       type="form"
       id="shopForm"
       name="updateStore"
-      submit-label="Salvar"
       @submit="handleSubmit"
       :actions="false"
     >
@@ -215,7 +212,7 @@ const handleSubmit = async (values: Values) => {
           { value: true, label: 'Ativa' },
           { value: false, label: 'Inativa' }
         ]"
-        :help="`Sua loja está ${shopActive ? 'ativa e aparecerá na listagem de lojas' : 'inativa e não aparecerá na lista de lojas.'}`"
+        :help="`Sua loja está ${shopActive ? 'ativa e aparecerá na listagem de lojas.' : 'inativa e não aparecerá na lista de lojas.'}`"
       />
 
       <div class="inline-flex gap-3 mt-8">

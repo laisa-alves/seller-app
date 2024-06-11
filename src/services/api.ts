@@ -88,11 +88,11 @@ class ProductsApiService extends BaseApiService {
     return this.request('GET', [storeId, 'products', productId], undefined, headers)
   }
 
-  async createProduct(storeId: string, data: object, headers: object): Promise<any> {
+  async postProduct(storeId: string, data: object, headers: object): Promise<any> {
     return this.request('POST', [storeId, 'products'], data, headers)
   }
 
-  async updateProduct(
+  async putProduct(
     storeId: string,
     productId: string,
     data: object,

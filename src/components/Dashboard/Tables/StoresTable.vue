@@ -45,7 +45,7 @@ const deleteShop = async (id: number) => {
 
 <template>
   <div class="relative overflow-x-auto shadow-sm sm:rouded-lg">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-700">
+    <table class="w-full text-sm text-left text-gray-700">
       <!-- Table header -->
       <thead class="text-sm text-gray-800 uppercase bg-gray-200">
         <tr>

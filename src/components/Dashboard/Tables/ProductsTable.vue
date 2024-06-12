@@ -1,13 +1,32 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productsStore.js'
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, computed, ref, watchEffect } from 'vue'
 import statusBadge from '@/components/Dashboard/Tables/components/StatusBadge.vue'
 import img from '@/assets/images/generic_product.png'
+
+// Create product categories
+const categories = [
+  { id: 'APPETIZER', name: 'Entrada' },
+  { id: 'MAIN_COURSE', name: 'Prato principal' },
+  { id: 'SIDE_DISH', name: 'Acompanhamento' },
+  { id: 'BEVERAGE', name: 'Bebida' },
+  { id: 'DESSERT', name: 'Sobremesa' }
+]
+
+const categoryNameById = (categoryId) => {
+  const category = categories.find((category) => category.id === categoryId)
+  return category ? category.name : 'Categoria não encontrada'
+}
+
+// const filteredProducts = (categoryId) => {
+//   return productsList.value.filter((product) => product.category === categoryId)
+// }
 
 const base_url = `${import.meta.env.VITE_API}`
 const router = useRouter()
 const productsStore = useProductStore()
+productsStore.fetchProductsFromAPI()
 
 // Create productList interface
 interface ProductsList {
@@ -26,10 +45,6 @@ watchEffect(() => {
   if (!productsStore.isLoading) {
     productsList.value = productsStore.products
   }
-})
-
-onMounted(async () => {
-  productsStore.fetchProductsFromAPI()
 })
 
 function addNewProduct() {
@@ -227,6 +242,15 @@ const deleteProduct = async (id: number) => {
             </tr>
           </thead>
 
+          <!-- Implementar subcategorias para organizar cardápio -->
+          <!-- <tr
+            v-for="category in categories"
+            :key="category.id"
+            class="text-md text-gray-700 bg-gray-50"
+          >
+            <th colspan="5" class="px-4 py-1">{{ category.name }}</th>
+          </tr> -->
+
           <!-- Table body -->
           <tbody v-if="!productsStore.isLoading">
             <tr v-for="product in productsList" :key="product.id" class="border-b">
@@ -247,9 +271,9 @@ const deleteProduct = async (id: number) => {
               <td class="px-4 py-3 text-center">{{ $formatCurrency(product.price) }}</td>
 
               <!-- Category -->
-              <td class="px-4 py-3 text-center">{{ product.category }}</td>
+              <td class="px-4 py-3 text-center">{{ categoryNameById(product.category) }}</td>
 
-              <!-- Toggle active / inactive -->
+              <!-- Active / inactive -->
               <td class="px-4 py-3">
                 <statusBadge
                   :isActive="product.active"

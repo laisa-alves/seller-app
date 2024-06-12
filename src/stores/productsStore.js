@@ -2,7 +2,6 @@ import { $api } from '@/services/api'
 import { defineStore } from 'pinia'
 import { useShopStore } from '@/stores/shopStore.js'
 
-// const base_url = `${import.meta.env.VITE_API}`
 const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
 export const useProductStore = defineStore('productStore', {
@@ -13,6 +12,8 @@ export const useProductStore = defineStore('productStore', {
   actions: {
     // Get all products from api
     async fetchProductsFromAPI() {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+
       const shopStore = useShopStore()
       const mainShopId = shopStore.mainShopId
 

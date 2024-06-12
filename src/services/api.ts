@@ -74,6 +74,12 @@ class StoresApiService extends ModelApiService {
   }
 }
 
+class OrdersApiService extends ModelApiService {
+  constructor() {
+    super('buyers/orders')
+  }
+}
+
 // Nested routes
 class ProductsApiService extends BaseApiService {
   constructor() {
@@ -108,5 +114,6 @@ class ProductsApiService extends BaseApiService {
 
 export const $api = {
   stores: new StoresApiService(),
-  products: new ProductsApiService()
+  products: new ProductsApiService(),
+  orders: new OrdersApiService()
 }

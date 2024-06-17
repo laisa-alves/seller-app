@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
-import { useOrderStore } from '@/stores/ordersStore.js'
-import { useShopStore } from '@/stores/shopStore'
+import { ref, onMounted } from 'vue'
 import {
   format,
   parseISO,
@@ -9,81 +7,28 @@ import {
   type FormatDistanceToNowStrictOptions
 } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useOrderStatus } from '@/composables/useOrderStatus'
+import type { Order } from '@/types/order'
 
+type StatusCode =
+  | 'payment_accepted'
+  | 'accepted'
+  | 'ready'
+  | 'dispatched'
+  | 'delivered'
+  | 'canceled'
+
+// eslint-disable-next-line no-redeclare
 function formatDistanceToNowStrict<DateType extends Date>(
   date: string | number | DateType,
   options?: FormatDistanceToNowStrictOptions
 ): string
 
-// Access stores
-const orderStores = useOrderStore()
-orderStores.fetchOrdersFromAPI()
+const { ordersStatus, filteredOrders, getReadableOrderStatus, fetchOrders } = useOrderStatus()
 
-const shopStore = useShopStore()
-const mainShopId = parseInt(shopStore.mainShopId)
+const selectedOrder = ref<Order>()
 
-// Create ordersList
-let ordersList = ref([])
-watchEffect(() => {
-  if (!orderStores.isLoading) {
-    ordersList.value = orderStores.orders.filter(
-      (mainShopOrders) => mainShopOrders['store']['id'] === mainShopId
-    )
-  }
-})
-
-const selectedOrder = ref(null)
-const orderStatus = ref([
-  {
-    name: 'Pendente',
-    state_code: 'payment_accepted',
-    message: 'Confirme o pedido',
-    count: '1'
-  },
-  {
-    name: 'Em preparo',
-    state_code: 'accepted',
-    message: 'Prepare o pedido',
-    count: '2'
-  },
-  {
-    name: 'Entregador a caminho',
-    state_code: 'ready',
-    message: 'Deixe tudo pronto para o entregador',
-    count: '3'
-  },
-  {
-    name: 'Em entrega',
-    state_code: 'dispatched',
-    message: 'Pedido enviado',
-    count: '2'
-  },
-  {
-    name: 'Concluído',
-    state_code: 'delivered',
-    message: 'Pedido concluído',
-    count: '1'
-  },
-  {
-    name: 'Cancelado',
-    state_code: 'canceled',
-    message: 'Pedido cancelado',
-    count: '1'
-  }
-])
-
-const filteredOrders = (statusCode) => {
-  return ordersList.value.filter((order) => order.state === statusCode)
-}
-
-const getReadableOrderStatus = (order) => {
-  const matchingStatus = orderStatus.value.find(
-    (statusEntry) => statusEntry.state_code === order.state
-  )
-  return matchingStatus ? matchingStatus.name : 'Desconhecido'
-}
-
-const selectOrder = (order) => {
+const selectOrder = (order: Order) => {
   selectedOrder.value = order
 }
 
@@ -93,18 +38,18 @@ function formatOrderDate(dateString: string) {
 }
 
 // Dynamic buttom and events to api
-const statusActions = {
+const statusActions: { [key: string]: { text: string; endpoint: string } } = {
   payment_accepted: { text: 'Aceitar pedido', endpoint: '/accept' },
   accepted: { text: 'Pedido pronto', endpoint: '/ready' },
   ready: { text: 'Pedido com entregador', endpoint: '/dispatch' },
   canceled: { text: 'Cancelar pedido', endpoint: '/cancel' }
 }
 
-const handleOrderAction = async (orderId: number) => {
+const handleOrderAction = async (orderId: number, actionType?: string) => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
   if (!selectedOrder.value) return
-  const action = statusActions[selectedOrder.value.state]
+  const action = actionType ? statusActions[actionType] : statusActions[selectedOrder.value.state]
   if (!action) {
     console.error('Ação não definida para o status do pedido.')
     return
@@ -132,15 +77,15 @@ const handleOrderAction = async (orderId: number) => {
     console.log('Resposta:', data)
   } catch (error) {
     console.error('Erro ao fazer solicitação', error)
+  } finally {
+    location.reload()
   }
 }
+
+onMounted(fetchOrders)
 </script>
 
 <template>
-  <div>
-    {{ ordersList }}
-  </div>
-
   <div class="flex flex-col h-screen md:flex-row w-full gap-2 drop-shadow-sm">
     <!-- Orders list -->
     <div
@@ -148,19 +93,16 @@ const handleOrderAction = async (orderId: number) => {
     >
       <div class="flex flex-col">
         <!-- Orders panel -->
-        <template v-for="status in orderStatus" :key="status.name">
+        <template v-for="status in ordersStatus" :key="status.name">
           <!-- Status category -->
-          <div
-            v-if="status.count > 0"
-            class="bg-gray-200 font-medium px-3 py-1 flex justify-between shadow-sm"
-          >
+          <div class="bg-gray-200 font-medium px-3 py-1 flex justify-between shadow-sm">
             <p>{{ status.name }}</p>
             <p>{{ status.count }}</p>
           </div>
 
           <!-- Cards for each order -->
           <div
-            v-for="order in filteredOrders(status.state_code)"
+            v-for="order in filteredOrders(status.state_code as StatusCode)"
             :key="order.id"
             class="p-3 hover:bg-gray-50 hover:border-l-4 focus:border-l-4 border-deep-orange-600 shadow-sm text-sm cursor-pointer"
             @click="selectOrder(order)"
@@ -183,7 +125,10 @@ const handleOrderAction = async (orderId: number) => {
           <p>Pedido #{{ selectedOrder.id }}</p>
           -
           <p>
-            Feito às <span class="font-bold">{{ formatOrderDate(selectedOrder.created_at) }}</span>
+            Feito às
+            <span class="font-bold">{{
+              formatOrderDate(selectedOrder.created_at.toString())
+            }}</span>
           </p>
         </div>
 
@@ -191,7 +136,8 @@ const handleOrderAction = async (orderId: number) => {
           <p class="text-sm uppercase pb-1">Status do pedido</p>
           <p class="font-bold pb-1">{{ getReadableOrderStatus(selectedOrder) }}</p>
           <p class="text-xs">
-            Há {{ formatDistanceToNowStrict(selectedOrder.created_at, { locale: ptBR }) }}
+            Há
+            {{ formatDistanceToNowStrict(selectedOrder.created_at.toString(), { locale: ptBR }) }}
           </p>
         </div>
 
@@ -234,9 +180,11 @@ const handleOrderAction = async (orderId: number) => {
         <!-- Action buttons -->
         <div class="mt-8 flex justify-end gap-3">
           <button
+            v-if="['payment_accepted', 'accepted'].includes(selectedOrder.state)"
+            @click="handleOrderAction(selectedOrder.id, 'canceled')"
             class="border rounded-md px-4 py-2 transition duration-200 hover:border-deep-orange-400 hover:text-deep-orange-400"
           >
-            Cancelar
+            {{ statusActions['canceled']?.text}}
           </button>
           <button
             v-if="['payment_accepted', 'accepted', 'ready'].includes(selectedOrder.state)"

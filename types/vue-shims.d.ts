@@ -2,6 +2,6 @@ import Vue from 'vue'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    $formatCurrency: (value: number) => string
+    $formatCurrency: (value: string) => string
   }
 }

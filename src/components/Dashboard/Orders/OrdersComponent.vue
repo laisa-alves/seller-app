@@ -21,13 +21,14 @@ orderStores.fetchOrdersFromAPI()
 
 const shopStore = useShopStore()
 const mainShopId = parseInt(shopStore.mainShopId)
-console.log(mainShopId)
 
 // Create ordersList
 let ordersList = ref([])
 watchEffect(() => {
   if (!orderStores.isLoading) {
-    ordersList.value = orderStores.orders.filter((mainShopOrders) => mainShopOrders['store']['id'] === mainShopId)
+    ordersList.value = orderStores.orders.filter(
+      (mainShopOrders) => mainShopOrders['store']['id'] === mainShopId
+    )
   }
 })
 
@@ -71,7 +72,6 @@ const orderStatus = ref([
   }
 ])
 
-
 const filteredOrders = (statusCode) => {
   return ordersList.value.filter((order) => order.state === statusCode)
 }
@@ -90,6 +90,49 @@ const selectOrder = (order) => {
 function formatOrderDate(dateString: string) {
   const date = parseISO(dateString)
   return format(date, 'HH:mm - dd/MM/yy ', { locale: ptBR })
+}
+
+// Dynamic buttom and events to api
+const statusActions = {
+  payment_accepted: { text: 'Aceitar pedido', endpoint: '/accept' },
+  accepted: { text: 'Pedido pronto', endpoint: '/ready' },
+  ready: { text: 'Pedido com entregador', endpoint: '/dispatch' },
+  canceled: { text: 'Cancelar pedido', endpoint: '/cancel' }
+}
+
+const handleOrderAction = async (orderId: number) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+
+  if (!selectedOrder.value) return
+  const action = statusActions[selectedOrder.value.state]
+  if (!action) {
+    console.error('Ação não definida para o status do pedido.')
+    return
+  }
+
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API}/buyers/orders/${orderId}/${action.endpoint}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(action)
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error('Resposta não ok')
+    }
+
+    const data = await response.json()
+    console.log('Resposta:', data)
+  } catch (error) {
+    console.error('Erro ao fazer solicitação', error)
+  }
 }
 </script>
 
@@ -190,12 +233,22 @@ function formatOrderDate(dateString: string) {
 
         <!-- Action buttons -->
         <div class="mt-8 flex justify-end gap-3">
-          <button class="bg-green-50 rounded-md px-4 py-2">Cancelar</button>
-          <button class="bg-green-50 rounded-md px-4 py-2">Aceitar</button>
+          <button
+            class="border rounded-md px-4 py-2 transition duration-200 hover:border-deep-orange-400 hover:text-deep-orange-400"
+          >
+            Cancelar
+          </button>
+          <button
+            v-if="['payment_accepted', 'accepted', 'ready'].includes(selectedOrder.state)"
+            @click="handleOrderAction(selectedOrder.id)"
+            class="bg-deep-orange-400 text-white rounded-md px-4 py-2 hover:bg-deep-orange-600 transition duration-200"
+          >
+            {{ statusActions[selectedOrder.state]?.text || 'Ação indisponível' }}
+          </button>
         </div>
       </div>
-      <div v-else>
-        <p>Selecione um pedido para ver os detalhes</p>
+      <div v-else class="p-4">
+        <p>Selecione um pedido para ver os detalhes...</p>
       </div>
     </div>
   </div>

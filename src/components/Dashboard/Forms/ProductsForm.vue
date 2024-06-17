@@ -174,7 +174,7 @@ const handleSubmit = async (values: Values) => {
             v-model="productPrice"
             label="Preço do produto"
             placeholder="0,00"
-            validation="required"
+            validation="required|contains_numeric"
           >
             <template #prefix>
               <p class="mr-2">R$</p>

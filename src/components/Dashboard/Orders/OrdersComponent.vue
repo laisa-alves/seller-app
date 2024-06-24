@@ -24,7 +24,8 @@ function formatDistanceToNowStrict<DateType extends Date>(
   options?: FormatDistanceToNowStrictOptions
 ): string
 
-const { ordersStatus, filteredOrders, getReadableOrderStatus, fetchOrders } = useOrderStatus()
+const { ordersStatus, filteredOrders, getReadableOrderStatus, fetchOrders, fetchEventSource } =
+  useOrderStatus()
 
 const selectedOrder = ref<Order>()
 
@@ -184,7 +185,7 @@ onMounted(fetchOrders)
             @click="handleOrderAction(selectedOrder.id, 'canceled')"
             class="border rounded-md px-4 py-2 transition duration-200 hover:border-deep-orange-400 hover:text-deep-orange-400"
           >
-            {{ statusActions['canceled']?.text}}
+            {{ statusActions['canceled']?.text }}
           </button>
           <button
             v-if="['payment_accepted', 'accepted', 'ready'].includes(selectedOrder.state)"

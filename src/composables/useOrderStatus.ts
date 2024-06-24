@@ -2,9 +2,10 @@ import { ref, watchEffect } from 'vue'
 import { useOrderStore } from '@/stores/ordersStore.js'
 import { useShopStore } from '@/stores/shopStore'
 import type { Order } from '@/types/order'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 
 export function useOrderStatus() {
-  const orderStores = useOrderStore()  
+  const orderStores = useOrderStore()
   const shopStore = useShopStore()
   const mainShopId = parseInt(shopStore.mainShopId)
 
@@ -60,14 +61,12 @@ export function useOrderStatus() {
       )
     }
 
-    ordersStatus.value.forEach(status => {
+    ordersStatus.value.forEach((status) => {
       status.count = 0
     })
 
-    ordersList.value.forEach(order => {
-      const findStatus = ordersStatus.value.find(
-        status => status.state_code === order.state
-      )
+    ordersList.value.forEach((order) => {
+      const findStatus = ordersStatus.value.find((status) => status.state_code === order.state)
       if (findStatus) {
         findStatus.count += 1
       }
@@ -93,11 +92,42 @@ export function useOrderStatus() {
     return matchingStatus ? matchingStatus.name : 'Desconhecido'
   }
 
+  // SSE conection
+  const newOrder = ref<Order>()
+  const hasNewOrder = ref(false)
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+
+  fetchEventSource(`${import.meta.env.VITE_API}/stores/${mainShopId}/orders/new`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    async onopen(response) {
+      if (response.ok) {
+        console.log('SSE connection opened')
+        return
+      }
+    },
+    onmessage(msg) {
+      if (msg.event === 'new-order') {
+        let data = JSON.parse(msg.data)
+        console.log(data.order)
+        if (data.order.length === 0) {
+          console.log('Não tem novos pedidos')
+        } else {
+          console.log('Tem novos pedidos')
+        fetchOrders()}
+      }
+    }
+  })
+
   return {
     ordersList,
     ordersStatus,
     filteredOrders,
     getReadableOrderStatus,
-    fetchOrders
+    fetchOrders,
+    fetchEventSource
   }
 }

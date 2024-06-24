@@ -10,7 +10,7 @@ import { RouterView } from 'vue-router'
   </header>
 
   <!-- Conteúdo das páginas -->
-  <div class="relative top-[88px]">
+  <div class="relative top-[88px] bg-white">
     <RouterView />
   </div>
 

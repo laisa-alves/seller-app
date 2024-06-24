@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocation } from 'vue-router'
 import HomeView from '@/views/Home/HomeView.vue'
 import InitialHomePage from '@/views/Home/Pages/InitialHomePage.vue'
 import AboutHomePage from '@/views/Home/Pages/AboutHomePage.vue'
@@ -6,12 +6,21 @@ import SupportHomePage from '@/views/Home/Pages/SupportHomePage.vue'
 import BlogHomePage from '@/views/Home/Pages/BlogHomePage.vue'
 import SignView from '@/views/Sign/SignView.vue'
 import DashboardView from '@/views/Dashboard/DashboardView.vue'
-import { Auth } from '../auth.ts'
+import { Auth } from '../auth'
+import MyShopsView from '@/views/Dashboard/myShopsView.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import RaitingsView from '@/views/Dashboard/RaitingsView.vue'
+import OrdersView from '@/views/Dashboard/OrdersView.vue'
+import MenuView from '@/views/Dashboard/MenuView.vue'
+import SettingsView from '@/views/Dashboard/SettingsView.vue'
+import shopFormView from '@/views/Dashboard/shopFormView.vue'
+import SignStore from '@/views/Sign/SignStore.vue'
+import productFormView from '@/views/Dashboard/DashboardView.vue'
 
 const auth = new Auth()
 
 // Bloqueia a rota para usuários não autenticados e redireciona para para login
-const authGuard = (to: RouteLocation, from: RouteLocation, next: RouteLocation) => {
+const authGuard = (to: RouteLocation, from: RouteLocation, next: Function) => {
   if (auth.isLoggedIn()) {
     next()
   } else {
@@ -20,7 +29,7 @@ const authGuard = (to: RouteLocation, from: RouteLocation, next: RouteLocation) 
 }
 
 // Bloqueia a rota para usuários autenticados e redireciona para dashboard
-const guest = (to: RouteLocation, from: RouteLocation, next: RouteLocation) => {
+const guest = (to: RouteLocation, from: RouteLocation, next: Function) => {
   if (auth.isLoggedIn()) {
     next('/dashboard')
   } else {
@@ -70,10 +79,73 @@ const router = createRouter({
       component: SignView
     },
     {
+      path: '/store/new',
+      name: 'newStore',
+      component: SignStore
+    },
+
+    {
       path: '/dashboard',
-      name: 'dashboard',
       beforeEnter: authGuard,
-      component: DashboardView
+      component: DashboardLayout,
+      children: [
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: DashboardView
+        },
+        {
+          path: 'raitings',
+          name: 'raitings',
+          component: RaitingsView
+        },
+        {
+          path: 'orders',
+          name: 'orders',
+          component: OrdersView
+        },
+        {
+          path: 'menu',
+          name: 'menu',
+          component: MenuView,
+          children: [
+            {
+              path: ':id/edit',
+              name: 'productEdit',
+              component: productFormView,
+              props: true
+            },
+            {
+              path: 'new',
+              name: 'productNew',
+              component: productFormView
+            }
+          ]
+        },
+        {
+          path: 'shops',
+          name: 'shops',
+          component: MyShopsView,
+          children: [
+            {
+              path: ':id/edit',
+              name: 'storeEdit',
+              component: shopFormView,
+              props: true
+            },
+            {
+              path: 'new',
+              name: 'storeNew',
+              component: shopFormView
+            }
+          ]
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: SettingsView
+        }
+      ]
     }
   ]
 })

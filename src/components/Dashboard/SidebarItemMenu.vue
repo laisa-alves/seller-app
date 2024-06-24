@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 
-const props = defineProps(['item', 'index'])
-const currentPage = useRoute().name
-const router = useRouter()
+defineProps(['item', 'index'])
 
-const handleItemClick = () => {
-  const pageName = currentPage === props.item.label ? '' : props.item.route
-  router.push(pageName)
-}
 </script>
 
 <template>
   <li>
     <RouterLink
-      @click.prevent="handleItemClick"
       :to="item.route"
       class="group relative flex items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-deep-orange-400 pr-6"
     >

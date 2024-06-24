@@ -2,7 +2,7 @@
 import PageTitle from '@/components/Dashboard/PageTitle.vue'
 import { ref } from 'vue'
 
-const pageTitle = ref('Início')
+const pageTitle = ref('Avaliações')
 </script>
 
 <template>

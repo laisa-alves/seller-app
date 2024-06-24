@@ -2,15 +2,15 @@ import { createStorage, type SimpleStorage } from './storage'
 
 class Auth {
   private storage: SimpleStorage
-  apiSellerKey = 'G2axqtqwkxq3HWojcm3vqixqGG8='
+  apiSellerKey = 'CuDKwYcSBnVRrHDQVIvCsg5pH1I='
 
   constructor(persistent = false) {
     this.storage = createStorage(persistent)
   }
 
   private getFallback(key: string): string | null {
-    let transient = createStorage(false)
-    let persistent = createStorage(true)
+    const transient = createStorage(false)
+    const persistent = createStorage(true)
 
     return transient.get(key) || persistent.get(key)
   }
@@ -39,10 +39,10 @@ class Auth {
   isLoggedIn() {
     return Boolean(this.getFallback('token'))
   }
-  
+
   signOut(andThen = () => {}) {
-    let transient = createStorage(false)
-    let persistent = createStorage(true)
+    const transient = createStorage(false)
+    const persistent = createStorage(true)
 
     transient.remove('token')
     transient.remove('email')

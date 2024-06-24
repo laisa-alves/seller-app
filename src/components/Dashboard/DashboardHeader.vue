@@ -23,7 +23,6 @@ function onSignOut() {
           class="z-20 block rounded-md border border-stroke p-1.5 shadow-sm lg:hidden"
           @click="
             () => {
-              console.log('Toggling sidebar')
               toggleSidebar()
             }
           "
